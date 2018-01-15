@@ -1,15 +1,15 @@
 pipeline:
 
-  docker:
+  build:
     environment:
-      - DOCKER_HOST=tcp://127.0.0.1:2375
-
-    image: plugins/docker
-    repo: ukhomeofficedigital/dq-raw-message-retrieval
+      - DOCKER_HOST=tcp://172.17.0.1:2375
+    image: registry.hub.docker.com/plugins/docker
+    repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
+    secrets: [ docker_username, docker_password ]
     context: app
     dockerfile: app/Dockerfile
     registry: quay.io
+    force_tag: true
     tags:
-      - latest
       - ${DRONE_COMMIT_SHA}
       - ${DRONE_REPO_BRANCH}
