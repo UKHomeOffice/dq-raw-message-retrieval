@@ -20,7 +20,7 @@ pipeline:
     image: quay.io/ukhomeofficedigital/kd:latest
     environment:
       - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk/
-      - KUBE_NAMESPACE=XXXXX
+      - KUBE_NAMESPACE=dq-apps
       - INSECURE_SKIP_TLS_VERIFY=true
     commands:
       - kd -f kube/deployment.yml -f kube/ingress.yml -f kube/service.yml
