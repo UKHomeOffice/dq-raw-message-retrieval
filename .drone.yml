@@ -1,0 +1,13 @@
+pipeline:
+
+  docker:
+    image: plugins/docker
+    repo: ukhomeofficedigital/dq-raw-message-retrieval
+    context: app
+    dockerfile: app/Dockerfile
+    registry: quay.io
+    tags:
+      - latest
+      - ${DRONE_COMMIT_SHA}
+      - ${DRONE_REPO_BRANCH}
+
