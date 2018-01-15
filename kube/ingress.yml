@@ -1,0 +1,21 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/secure-backends: "true"
+  name: dq-raw-message-retrieval-ingress
+spec:
+  rules:
+  - host: dq-raw-message-retrieval.notprod.homeoffice.gov.uk
+    http:
+      paths:
+      - backend:
+          serviceName: dq-raw-message-retrieval-service
+          servicePort: https
+        path: /
+  tls:
+  - hosts:
+    - dq-raw-message-retrieval.notprod.homeoffice.gov.uk
+    - www.dq-raw-message-retrieval.notprod.homeoffice.gov.uk
+    secretName: external-tls
