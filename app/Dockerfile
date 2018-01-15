@@ -1,5 +1,5 @@
 FROM node:9-alpine as builder
-COPY package.* .
+COPY package* ./
 RUN npm i
 COPY . .
 RUN npm test
