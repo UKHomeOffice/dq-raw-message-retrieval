@@ -7,7 +7,7 @@ metadata:
   name: dq-raw-message-retrieval-ingress
 spec:
   rules:
-  - host: dq-raw-message-retrieval.notprod.homeoffice.gov.uk
+  - host: retrieve-a-raw-message.notprod.dq.notprod.homeoffice.gov.uk
     http:
       paths:
       - backend:
@@ -16,6 +16,6 @@ spec:
         path: /
   tls:
   - hosts:
-    - dq-raw-message-retrieval.notprod.homeoffice.gov.uk
-    - www.dq-raw-message-retrieval.notprod.homeoffice.gov.uk
+    - retrieve-a-raw-message.notprod.dq.notprod.homeoffice.gov.uk
+    - www.retrieve-a-raw-message.notprod.dq.notprod.homeoffice.gov.uk
     secretName: external-tls
