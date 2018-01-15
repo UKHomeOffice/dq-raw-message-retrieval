@@ -1,6 +1,9 @@
 pipeline:
 
   docker:
+    environment:
+      - DOCKER_HOST=tcp://127.0.0.1:2375
+
     image: plugins/docker
     repo: ukhomeofficedigital/dq-raw-message-retrieval
     context: app
@@ -10,4 +13,3 @@ pipeline:
       - latest
       - ${DRONE_COMMIT_SHA}
       - ${DRONE_REPO_BRANCH}
-
