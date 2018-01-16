@@ -4,7 +4,8 @@ kind: Ingress
 metadata:
   annotations:
     ingress.kubernetes.io/secure-backends: "true"
-    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: "nginx-external"
+    stable.k8s.psg.io/kcm.class: default
   name: dq-raw-message-retrieval-ingress
 spec:
   rules:
@@ -17,6 +18,5 @@ spec:
         path: /
   tls:
   - hosts:
-#    - retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
-#    - www.retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
-    secretName: external-tls
+    - retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
+    - www.retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
