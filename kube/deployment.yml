@@ -4,7 +4,7 @@ kind: Deployment
 metadata:
   name: dq-raw-message-retrieval
 spec:
-  replicas: 1
+  replicas: 2
   template:
     metadata:
       labels:
@@ -13,11 +13,15 @@ spec:
       containers:
       - name: dq-raw-message-retrieval
         image: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:{{.DRONE_COMMIT_SHA}}
+        securityContext:
+          runAsNonRoot: true
         ports:
           - name: http
             containerPort: 3000
       - name: proxy
         image: quay.io/ukhomeofficedigital/nginx-proxy:v1.6.1
+        securityContext:
+          runAsNonRoot: true
         env:
           - name: PROXY_SERVICE_HOST
             value: '127.0.0.1'
