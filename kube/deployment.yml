@@ -16,10 +16,6 @@ spec:
         ports:
           - name: http
             containerPort: 3000
-        resources:
-          limits:
-            cpu: 250m
-            memory: 256Mi
       - name: proxy
         image: quay.io/ukhomeofficedigital/nginx-proxy:v1.6.1
         env:
