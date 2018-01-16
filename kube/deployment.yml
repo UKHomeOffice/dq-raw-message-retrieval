@@ -13,6 +13,7 @@ spec:
       containers:
       - name: dq-raw-message-retrieval
         image: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:{{.DRONE_COMMIT_SHA}}
+        imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
         ports:
