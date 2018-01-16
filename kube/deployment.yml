@@ -19,7 +19,7 @@ spec:
           - name: http
             containerPort: 3000
       - name: proxy
-        image: quay.io/ukhomeofficedigital/nginx-proxy:v1.6.1
+        image: quay.io/ukhomeofficedigital/nginx-proxy
         securityContext:
           runAsNonRoot: true
         env:
