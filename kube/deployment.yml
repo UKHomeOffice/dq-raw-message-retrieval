@@ -26,7 +26,7 @@ spec:
           - name: PROXY_SERVICE_HOST
             value: '127.0.0.1'
           - name: PROXY_SERVICE_PORT
-            value: '9000'
+            value: '3000'
           - name: LOG_FORMAT_NAME
             value: json
           - name: NAXSI_USE_DEFAULT_RULES
