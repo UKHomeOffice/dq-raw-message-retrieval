@@ -4,6 +4,7 @@ kind: Ingress
 metadata:
   annotations:
     ingress.kubernetes.io/secure-backends: "true"
+    kubernetes.io/tls-acme: "true"
   name: dq-raw-message-retrieval-ingress
 spec:
   rules:
