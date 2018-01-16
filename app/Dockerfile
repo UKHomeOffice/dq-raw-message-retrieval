@@ -12,4 +12,5 @@ COPY E:\\RAW_ARCHIVE E:\\RAW_ARCHIVE
 COPY package.json .
 COPY index.js .
 EXPOSE 3000
+USER node
 CMD npm start
