@@ -23,7 +23,7 @@ pipeline:
       - KUBE_NAMESPACE=dq-apps
       - INSECURE_SKIP_TLS_VERIFY=true
     commands:
-      - kd -f kube/network-policy.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
+      - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
     secrets: [ KUBE_TOKEN ]
     when:
       event: push
