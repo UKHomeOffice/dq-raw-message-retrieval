@@ -7,8 +7,8 @@ metadata:
   name: dq-raw-message-retrieval-service
 spec:
   ports:
-  - name: https
-    port: 10443
-    targetPort: https
+  - name: http
+    port: 3000
+    targetPort: http
   selector:
     name: dq-raw-message-retrieval
