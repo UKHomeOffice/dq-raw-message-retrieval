@@ -1,9 +1,7 @@
 pipeline:
 
   build:
-    environment:
-      - DOCKER_HOST=tcp://172.17.0.1:2375
-    image: registry.hub.docker.com/plugins/docker
+    image: ukhomeoffice/drone-docker
     repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
     secrets: [ docker_username, docker_password ]
     context: app
