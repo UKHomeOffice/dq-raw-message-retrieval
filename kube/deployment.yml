@@ -19,6 +19,22 @@ spec:
         ports:
           - name: http
             containerPort: 3000
+        env:
+          - name: AWS_ACCESS_KEY_ID
+            valueFrom:
+              secretKeyRef:
+                name: aws_creds
+                key: AWS_ACCESS_KEY_ID
+          - name: AWS_SECRET_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: aws_creds
+                key: AWS_SECRET_ACCESS_KEY
+          - name: BUCKET_NAME
+            valueFrom:
+              secretKeyRef:
+                name: aws_creds
+                key: BUCKET_NAME
       - name: proxy
         image: quay.io/ukhomeofficedigital/nginx-proxy
         securityContext:
