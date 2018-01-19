@@ -2,32 +2,63 @@ const rewire = require('rewire')
 const app = rewire('../')
 const chai = require('chai')
 const sinon = require('sinon')
-const request = require('supertest');
+const request = require('supertest')
+const expect = chai.expect
 
 chai.use(require('sinon-chai'))
-
 chai.use(require('chai-as-promised'))
-var expect = chai.expect
+
+// Example Url
+// https://analysis.dq.homeoffice.gov.uk/raw/get_raw_msg.php/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
+// E:\RAW_ARCHIVE/20180112/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
+
+// {
+//   key: "20180112/RAW_20180112_1929_1170.zip",
+//     Bucket: "whatever",
+//   locationinsidezip: "1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt"
+//
+// }
+// E:\RAW_ARCHIVE/20180112/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
+const valid_zip_buffer = Buffer.from('UEsDBAoAAAAAADJUK0wAAAAAAAAAAAAAAAAIABAAZmlsZWRpci9VWAwAqUBXWn89V1r2ARQAUEsDBBQACAAIADJUK0wAAAAAAAAAAAAAAAAQABAAZmlsZWRpci9maWxlbmFtZVVYDABjPldafz1XWvYBFABLy89PSiziAgBQSwcIR5cssgkAAAAHAAAAUEsBAhUDCgAAAAAAMlQrTAAAAAAAAAAAAAAAAAgADAAAAAAAAAAAQO1BAAAAAGZpbGVkaXIvVVgIAKlAV1p/PVdaUEsBAhUDFAAIAAgAMlQrTEeXLLIJAAAABwAAABAADAAAAAAAAAAAQKSBNgAAAGZpbGVkaXIvZmlsZW5hbWVVWAgAYz5XWn89V1pQSwUGAAAAAAIAAgCMAAAAjQAAAAAA', 'base64')
+
+const mock_s3 = params => {
+    return {
+      promise: () => new Promise((resolve, reject) => {
+      if(params.Key === "zip_file_fixture.zip")
+        return resolve({Body:valid_zip_buffer})
+      return reject("NoSuchKey: The specified key does not exist")
+    })
+  }
+}
 
 describe('RMR tool', () => {
-  describe('get_zip_path_from_url', () => {
+  let s3_getObject_stub
+  before(() => {
+    s3_getObject_stub = sinon.stub(app.__get__('s3'), 'getObject').callsFake(mock_s3)
+  })
+
+  after(() => {
+    app.__get__('http_server').close()
+    s3_getObject_stub.restore()
+  })
+  
+  describe('get_file_path_in_zip_from_url', () => {
     it('should return the correct path for the zip from the url', () =>
-      expect(app.__get__('get_zip_path_from_url')
-      ('/ignored/zipfile_date/filedir/filename'))
-        .to.equal('/filename'))
+      expect(app.__get__('get_file_path_in_zip_from_url')
+      ('/raw/get_raw_msg.php/zipfile.zip/filedir/filename.txt'))
+        .to.equal('filedir/filename.txt'))
   })
 
   describe('get_zip_name_from_url', () => {
     it('should return the correct zip name from the url', () =>
       expect(app.__get__('get_zip_name_from_url')
-      ('/ignored/zipfile_date/filedir/filename'))
-        .to.equal('filename'))
+      ('/raw/get_raw_msg.php/zipfile.zip/filedir/filename.txt'))
+        .to.equal('zipfile.zip'))
   })
 
   describe('read_file_from_zip_buffer', () => {
     it('should return foobar', () => {
-      const buffer = Buffer.from('UEsDBAoAAAAAADJUK0wAAAAAAAAAAAAAAAAIABAAZmlsZWRpci9VWAwAqUBXWn89V1r2ARQAUEsDBBQACAAIADJUK0wAAAAAAAAAAAAAAAAQABAAZmlsZWRpci9maWxlbmFtZVVYDABjPldafz1XWvYBFABLy89PSiziAgBQSwcIR5cssgkAAAAHAAAAUEsBAhUDCgAAAAAAMlQrTAAAAAAAAAAAAAAAAAgADAAAAAAAAAAAQO1BAAAAAGZpbGVkaXIvVVgIAKlAV1p/PVdaUEsBAhUDFAAIAAgAMlQrTEeXLLIJAAAABwAAABAADAAAAAAAAAAAQKSBNgAAAGZpbGVkaXIvZmlsZW5hbWVVWAgAYz5XWn89V1pQSwUGAAAAAAIAAgCMAAAAjQAAAAAA', 'base64')
-      expect(app.__get__('read_file_from_zip_buffer')(buffer, 'filedir/filename')).to.equal('foobar\n')
+      expect(app.__get__('read_file_from_zip_buffer')(valid_zip_buffer, 'filedir/filename')).to.equal('foobar\n')
     })
   })
 
@@ -36,7 +67,7 @@ describe('RMR tool', () => {
       writeHead: sinon.stub(),
       end: sinon.stub()
     }
-    const req = {url: '/ignored/zipfile_date/filedir/filename'}
+    const req = {url: '/raw/get_raw_msg.php/zip_file_fixture.zip/filedir/filename'}
     it('should write the head as html', () =>
       app.__get__('request_handler')(req, res)
         .then(() =>
@@ -57,18 +88,24 @@ describe('RMR tool', () => {
     )
   })
 
-  describe('Browser Tests', function() {
-    xit('should display zip contents successfully', function(done) {
-      return request(app)
-        .get('/')
+  describe('Browser Tests', () => {
+    it('should display zip contents successfully', () =>
+      request(app.__get__('http_server'))
+        .get('/raw/get_raw_msg.php/zip_file_fixture.zip/filedir/filename')
         .expect(200)
-        .then(response => {
-          assert(response.body, 'foobar')
-        })
-    });
-  });
-
-  after(() => {
-    app.__get__('http_server').close()
+        .then(response =>
+          expect(response.text).to.have.string('foobar')
+        )
+    )
+    it('should 404 on unknown path in zip', () =>
+      request(app.__get__('http_server'))
+        .get('/raw/get_raw_msg.php/zip_file_fixture.zip/filedir/nothere')
+        .expect(404)
+    )
+    it('should 404 on unknown path to zip', () =>
+      request(app.__get__('http_server'))
+        .get('/raw/get_raw_msg.php/nothere.zip/filedir/filename')
+        .expect(404)
+    )
   })
 })

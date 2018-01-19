@@ -13,4 +13,5 @@ COPY package.json .
 COPY index.js .
 EXPOSE 3000
 USER node
+ENV BUCKET_NAME=""
 CMD npm start
