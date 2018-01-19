@@ -23,17 +23,17 @@ spec:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
-                name: aws_creds
+                name: awscreds
                 key: AWS_ACCESS_KEY_ID
           - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
-                name: aws_creds
+                name: awscreds
                 key: AWS_SECRET_ACCESS_KEY
           - name: BUCKET_NAME
             valueFrom:
               secretKeyRef:
-                name: aws_creds
+                name: awscreds
                 key: BUCKET_NAME
       - name: proxy
         image: quay.io/ukhomeofficedigital/nginx-proxy
