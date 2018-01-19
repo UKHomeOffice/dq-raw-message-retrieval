@@ -21,7 +21,10 @@ pipeline:
       - KUBE_NAMESPACE=dq-apps-notprod
       - INSECURE_SKIP_TLS_VERIFY=true
     commands:
+      - export BUCKET_NAME=$DEV_BUCKET_NAME
+      - export AWS_ID=$DEV_AWS_ID
+      - export AWS_KEY=$DEV_AWS_KEY
       - kd -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
-    secrets: [ KUBE_TOKEN ]
+    secrets: [ KUBE_TOKEN , DEV_BUCKET_NAME, DEV_AWS_ID, DEV_AWS_KEY]
     when:
       event: push
