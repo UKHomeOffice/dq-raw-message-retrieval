@@ -9,7 +9,7 @@ metadata:
   name: dq-raw-message-retrieval-ingress
 spec:
   rules:
-  - host: retrieve-a-raw-message.notprod.acp.homeoffice.gov.uk
+  - host: retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
     http:
       paths:
       - backend:
@@ -18,5 +18,5 @@ spec:
         path: /
   tls:
   - hosts:
-    - retrieve-a-raw-message.notprod.acp.homeoffice.gov.uk
-    - www.retrieve-a-raw-message.notprod.acp.homeoffice.gov.uk
+    - retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
+    - www.retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
