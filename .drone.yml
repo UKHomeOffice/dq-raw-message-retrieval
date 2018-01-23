@@ -26,6 +26,7 @@ pipeline:
       - export AWS_SECRET_ACCESS_KEY=$$DEV_AWS_SECRET_ACCESS_KEY
       - export KEYCLOAK_CLIENT_ID=$$DEV_KEYCLOAK_CLIENT_ID
       - export KEYCLOAK_CLIENT_SECRET=$$DEV_KEYCLOAK_CLIENT_SECRET
+      - export KEYCLOAK_DISCOVERY=DEV_KEYCLOAK_DISCOVERY
       - kd -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
     secrets:
       - KUBE_TOKEN
@@ -34,6 +35,6 @@ pipeline:
       - DEV_AWS_SECRET_ACCESS_KEY
       - DEV_KEYCLOAK_CLIENT_ID
       - DEV_KEYCLOAK_CLIENT_SECRET
-      - KEYCLOAK_DISCOVERY
+      - DEV_KEYCLOAK_DISCOVERY
     when:
       event: push
