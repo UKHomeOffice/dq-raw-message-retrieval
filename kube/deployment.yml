@@ -17,7 +17,7 @@ spec:
         securityContext:
           runAsNonRoot: true
         ports:
-          - name: app_http
+          - name: app-http
             containerPort: 3000
         env:
           - name: AWS_ACCESS_KEY_ID
@@ -43,7 +43,6 @@ spec:
             memory: 100Mi
         args:
           - --client-id "{{.KEYCLOAK_CLIENT_ID}}"
-          - --client-secret "{{.KEYCLOAK_CLIENT_SECRET}}"
           - --listen 0.0.0.0:8081
           - --discovery-url "{{.KEYCLOAK_DISCOVERY}}"
           - --upstream-url http://127.0.0.1:8000
