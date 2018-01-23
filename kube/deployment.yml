@@ -16,43 +16,56 @@ spec:
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
-        ports:
-          - name: app-http
-            containerPort: 3000
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
               secretKeyRef:
-                name: awscreds
+                name: dq-raw-message-retrieval
                 key: AWS_ACCESS_KEY_ID
           - name: AWS_SECRET_ACCESS_KEY
             valueFrom:
               secretKeyRef:
-                name: awscreds
+                name: dq-raw-message-retrieval
                 key: AWS_SECRET_ACCESS_KEY
           - name: BUCKET_NAME
             valueFrom:
               secretKeyRef:
-                name: awscreds
+                name: dq-raw-message-retrieval
                 key: BUCKET_NAME
       - name: keycloak-proxy
         image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0
+        securityContext:
+          runAsNonRoot: true
         resources:
           limits:
             cpu: 100m
             memory: 100Mi
+        env:
+          - name: PROXY_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_CLIENT_ID
+          - name: PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_CLIENT_SECRET
+          - name: PROXY_LISTEN
+            value: 0.0.0.0:8081
+          - name: PROXY_DISCOVERY_URL
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_DISCOVERY
+          - name: PROXY_UPSTREAM_URL
+            value: http://127.0.0.1:3000
         args:
-          - --client-id "{{.KEYCLOAK_CLIENT_ID}}"
-          - --listen 0.0.0.0:8081
-          - --discovery-url "{{.KEYCLOAK_DISCOVERY}}"
-          - --upstream-url http://127.0.0.1:8000
-          - --json-format
-          - --resources "uri=/*"
+          - --resources
+          - uri=/*
           - --enable-logging
+          - --enable-json-logging
           - --verbose
-        ports:
-          - name: http
-            containerPort: 8081
       - name: proxy
         image: quay.io/ukhomeofficedigital/nginx-proxy
         securityContext:
