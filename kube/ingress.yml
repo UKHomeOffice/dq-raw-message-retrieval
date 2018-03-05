@@ -2,14 +2,18 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  annotations:
-    ingress.kubernetes.io/secure-backends: "true"
-    kubernetes.io/ingress.class: "nginx-external"
+  labels:
     stable.k8s.psg.io/kcm.class: default
+  annotations:
+    stable.k8s.psg.io/kcm.provider: http
+    kubernetes.io/ingress.class: "nginx-external"
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+    ingress.kubernetes.io/secure-backends: "true"
+    kubernetes.io/tls-acme: "true"
   name: dq-raw-message-retrieval-ingress
 spec:
   rules:
-  - host: retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
+  - host: {{.URL}}
     http:
       paths:
       - backend:
@@ -18,5 +22,5 @@ spec:
         path: /
   tls:
   - hosts:
-    - retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
-    - www.retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
+    - {{.URL}}
+    secretName: rmr-tls
