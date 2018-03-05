@@ -17,23 +17,50 @@ pipeline:
   deploy_to_dev:
     image: quay.io/ukhomeofficedigital/kd:latest
     environment:
-      - KUBE_SERVER=https://kube-api-notprod.notprod.acp.homeoffice.gov.uk/
       - KUBE_NAMESPACE=dq-apps-notprod
       - INSECURE_SKIP_TLS_VERIFY=true
+      - URL=retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
     commands:
+      - export KUBE_SERVER=$$DEV_KUBE_SERVER
+      - export KUBE_TOKEN=$$DEV_KUBE_TOKEN
       - export BUCKET_NAME=$$DEV_BUCKET_NAME
       - export AWS_ACCESS_KEY_ID=$$DEV_AWS_ACCESS_KEY_ID
       - export AWS_SECRET_ACCESS_KEY=$$DEV_AWS_SECRET_ACCESS_KEY
-      - export KEYCLOAK_CLIENT_ID=$$DEV_KEYCLOAK_CLIENT_ID
       - export KEYCLOAK_CLIENT_SECRET=$$DEV_KEYCLOAK_CLIENT_SECRET
       - export KEYCLOAK_DISCOVERY=$$DEV_KEYCLOAK_DISCOVERY
       - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
     secrets:
-      - KUBE_TOKEN
+      - DEV_KUBE_TOKEN
       - DEV_BUCKET_NAME
       - DEV_AWS_ACCESS_KEY_ID
       - DEV_AWS_SECRET_ACCESS_KEY
-      - DEV_KEYCLOAK_CLIENT_ID
+      - DEV_KEYCLOAK_CLIENT_SECRET
+      - DEV_KEYCLOAK_DISCOVERY
+    when:
+      event: push
+
+
+  deploy_to_prod:
+    image: quay.io/ukhomeofficedigital/kd:latest
+    environment:
+      - KUBE_NAMESPACE=dq-apps
+      - INSECURE_SKIP_TLS_VERIFY=true
+      - URL=retrieve-a-raw-message.prod.dq.homeoffice.gov.uk
+    commands:
+      - export KUBE_SERVER=$$PROD_KUBE_SERVER
+      - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
+      - export BUCKET_NAME=$$PROD_BUCKET_NAME
+      - export AWS_ACCESS_KEY_ID=$$PROD_AWS_ACCESS_KEY_ID
+      - export AWS_SECRET_ACCESS_KEY=$$PROD_AWS_SECRET_ACCESS_KEY
+      - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
+      - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+      - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
+    secrets:
+      - PROD_KUBE_SERVER
+      - PROD_KUBE_TOKEN
+      - DEV_BUCKET_NAME
+      - DEV_AWS_ACCESS_KEY_ID
+      - DEV_AWS_SECRET_ACCESS_KEY
       - DEV_KEYCLOAK_CLIENT_SECRET
       - DEV_KEYCLOAK_DISCOVERY
     when:
