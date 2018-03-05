@@ -42,10 +42,7 @@ spec:
             memory: 100Mi
         env:
           - name: PROXY_CLIENT_ID
-            valueFrom:
-              secretKeyRef:
-                name: dq-raw-message-retrieval
-                key: KEYCLOAK_CLIENT_ID
+            value: raw-message-retrieval
           - name: PROXY_CLIENT_SECRET
             valueFrom:
               secretKeyRef:
