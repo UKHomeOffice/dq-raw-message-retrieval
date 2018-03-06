@@ -51,7 +51,7 @@ http_server.listen(3000)
 const templated_response = payload => `<!DOCTYPE html>
 <html>
 <body>
-<font face="courier>"
+<font face="courier">
 ${payload}
 </font>
 </body>
