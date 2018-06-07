@@ -17,9 +17,9 @@ pipeline:
   deploy_to_dev:
     image: quay.io/ukhomeofficedigital/kd:latest
     environment:
+      - URL=retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
       - KUBE_NAMESPACE=dq-apps-notprod
       - INSECURE_SKIP_TLS_VERIFY=true
-      - URL=retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk
     commands:
       - export KUBE_SERVER=$$DEV_KUBE_SERVER
       - export KUBE_TOKEN=$$DEV_KUBE_TOKEN
@@ -44,9 +44,9 @@ pipeline:
   deploy_to_prod:
     image: quay.io/ukhomeofficedigital/kd:latest
     environment:
+      - URL=retrieve-a-raw-message.dq.homeoffice.gov.uk
       - KUBE_NAMESPACE=dq-apps
       - INSECURE_SKIP_TLS_VERIFY=true
-      - URL=retrieve-a-raw-message.prod.dq.homeoffice.gov.uk
     commands:
       - export KUBE_SERVER=$$PROD_KUBE_SERVER
       - export KUBE_TOKEN=$$PROD_KUBE_TOKEN
@@ -65,4 +65,5 @@ pipeline:
       - PROD_KEYCLOAK_CLIENT_SECRET
       - PROD_KEYCLOAK_DISCOVERY
     when:
-      event: push
+      environment: production
+      event: deployment
