@@ -28,6 +28,7 @@ pipeline:
       - export AWS_SECRET_ACCESS_KEY=$$DEV_AWS_SECRET_ACCESS_KEY
       - export KEYCLOAK_CLIENT_SECRET=$$DEV_KEYCLOAK_CLIENT_SECRET
       - export KEYCLOAK_DISCOVERY=$$DEV_KEYCLOAK_DISCOVERY
+      - export UID=$$UID
       - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
     secrets:
       - DEV_KUBE_SERVER
@@ -37,6 +38,7 @@ pipeline:
       - DEV_AWS_SECRET_ACCESS_KEY
       - DEV_KEYCLOAK_CLIENT_SECRET
       - DEV_KEYCLOAK_DISCOVERY
+      - UID
     when:
       event: push
 
@@ -55,6 +57,7 @@ pipeline:
       - export AWS_SECRET_ACCESS_KEY=$$PROD_AWS_SECRET_ACCESS_KEY
       - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
       - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+      - export UID=$$UID
       - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
     secrets:
       - PROD_KUBE_SERVER
@@ -64,6 +67,7 @@ pipeline:
       - PROD_AWS_SECRET_ACCESS_KEY
       - PROD_KEYCLOAK_CLIENT_SECRET
       - PROD_KEYCLOAK_DISCOVERY
+      - UID
     when:
       environment: production
       event: deployment

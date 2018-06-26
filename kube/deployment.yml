@@ -32,6 +32,11 @@ spec:
               secretKeyRef:
                 name: dq-raw-message-retrieval
                 key: BUCKET_NAME
+          - name: UID
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: UID
       - name: keycloak-proxy
         image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0
         securityContext:
