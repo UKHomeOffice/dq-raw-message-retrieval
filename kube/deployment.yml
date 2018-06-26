@@ -16,7 +16,7 @@ spec:
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
-          runAsUser: UID
+          runAsUser: 1000
         env:
           - name: AWS_ACCESS_KEY_ID
             valueFrom:
@@ -73,7 +73,7 @@ spec:
         image: quay.io/ukhomeofficedigital/nginx-proxy
         securityContext:
           runAsNonRoot: true
-          runAsUser: UID
+          runAsUser: 1000
         env:
           - name: PROXY_SERVICE_HOST
             value: 'http://127.0.0.1'
