@@ -14,8 +14,7 @@ COPY index.js .
 EXPOSE 3000
 ENV USERMAP_UID 1000
 USER ${USERMAP_UID}
-USER rmr:rmr
-    && adduser --disabled-password --gecos "" --uid ${USERMAP_UID} rmr \
+RUN adduser -D -g '' --uid ${USERMAP_UID} rmr
 ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
 ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 ENV BUCKET_NAME ${BUCKET_NAME}
