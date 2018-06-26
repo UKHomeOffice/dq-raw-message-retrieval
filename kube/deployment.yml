@@ -37,6 +37,7 @@ spec:
         image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0
         securityContext:
           runAsNonRoot: true
+          runAsUser: 1000
         resources:
           limits:
             cpu: 100m
