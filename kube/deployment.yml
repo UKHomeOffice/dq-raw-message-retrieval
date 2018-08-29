@@ -34,7 +34,7 @@ spec:
                 name: dq-raw-message-retrieval
                 key: BUCKET_NAME
       - name: keycloak-proxy
-        image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.1.0
+        image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.3.0
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
