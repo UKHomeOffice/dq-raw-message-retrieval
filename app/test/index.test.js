@@ -41,18 +41,18 @@ describe('RMR tool', () => {
     app.__get__('http_server').close()
     s3_getObject_stub.restore()
   })
-  
+
   describe('get_file_path_in_zip_from_url', () => {
     it('should return the correct path for the zip from the url', () =>
       expect(app.__get__('get_file_path_in_zip_from_url')
-      ('/raw/get_raw_msg.php/zipfile.zip/filedir/filename.txt'))
+      ('/raw/get_raw_msg.php/s4/raw/YYY/MM/DD/zipfile.zip/filedir/filename.txt'))
         .to.equal('filedir/filename.txt'))
   })
 
   describe('get_zip_name_from_url', () => {
     it('should return the correct zip name from the url', () =>
       expect(app.__get__('get_zip_name_from_url')
-      ('/raw/get_raw_msg.php/zipfile.zip/filedir/filename.txt'))
+      ('/raw/get_raw_msg.php/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
         .to.equal('zipfile.zip'))
   })
 
@@ -73,7 +73,7 @@ describe('RMR tool', () => {
         .then(() =>
           expect(res.writeHead).to.be.calledWith(200, {'Content-Type': 'text/html'}))
     )
-    
+
     it('should return everything we expect', () =>
       app.__get__('request_handler')(req, res)
         .then(() =>
