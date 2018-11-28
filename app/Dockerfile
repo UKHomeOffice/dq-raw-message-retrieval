@@ -5,7 +5,7 @@ COPY . .
 RUN npm test
 RUN npm prune --production
 
-FROM node:9-alpine as runner
+FROM node:10-alpine as runner
 
 ENV USERMAP_UID 1000
 
