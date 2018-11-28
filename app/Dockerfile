@@ -1,6 +1,6 @@
 FROM node:10-alpine as builder
 COPY package* ./
-RUN npm i
+RUN npm install
 COPY . .
 RUN npm test
 RUN npm prune --production
