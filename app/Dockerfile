@@ -1,11 +1,9 @@
-FROM node:9-alpine as builder
+FROM node:10-alpine as builder
 COPY package* ./
 RUN npm i
 COPY . .
 RUN npm test
 RUN npm prune --production
-
-
 
 FROM node:9-alpine as runner
 
