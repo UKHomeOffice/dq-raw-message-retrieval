@@ -49,8 +49,6 @@ pipeline:
       - export BUCKET_NAME=$$PROD_BUCKET_NAME
       - export AWS_ACCESS_KEY_ID=$$PROD_AWS_ACCESS_KEY_ID
       - export AWS_SECRET_ACCESS_KEY=$$PROD_AWS_SECRET_ACCESS_KEY
-      - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
-      - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
       - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
     secrets:
       - PROD_KUBE_SERVER
@@ -58,8 +56,6 @@ pipeline:
       - PROD_BUCKET_NAME
       - PROD_AWS_ACCESS_KEY_ID
       - PROD_AWS_SECRET_ACCESS_KEY
-      - PROD_KEYCLOAK_CLIENT_SECRET
-      - PROD_KEYCLOAK_DISCOVERY
     when:
       environment: production
       event: deployment
