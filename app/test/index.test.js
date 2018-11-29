@@ -45,14 +45,14 @@ describe('RMR tool', () => {
   describe('get_file_path_in_zip_from_url', () => {
     it('should return the correct path for the zip from the url', () =>
       expect(app.__get__('get_file_path_in_zip_from_url')
-      ('/raw/get_raw_msg.php/s4/raw/YYY/MM/DD/zipfile.zip/filedir/filename.txt'))
+      ('/raw/index.js/s4/raw/YYY/MM/DD/zipfile.zip/filedir/filename.txt'))
         .to.equal('filedir/filename.txt'))
   })
 
   describe('get_zip_name_from_url', () => {
     it('should return the correct zip name from the url', () =>
       expect(app.__get__('get_zip_name_from_url')
-      ('/raw/get_raw_msg.php/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
+      ('/raw/index.js/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
         .to.equal('zipfile.zip'))
   })
 
