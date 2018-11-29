@@ -19,7 +19,7 @@ let s3 = new AWS.S3({
   }
 })
 
-const get_zip_name_from_url = url => /.*\/(.*)\/.*\/.*$/.exec(url)[1]
+const get_zip_name_from_url = url => /.*\/(.*\/.*\/.*\/.*\/.*\/.*)\/.*\/.*$/.exec(url)[1]
 
 const get_file_path_in_zip_from_url = url => /.*\/(.*\/.*)$/.exec(url)[1]
 
