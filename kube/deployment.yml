@@ -12,6 +12,7 @@ spec:
         name: dq-raw-message-retrieval
     spec:
       containers:
+        
       - name: dq-raw-message-retrieval
         image: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:{{.DRONE_COMMIT_SHA}}
         imagePullPolicy: Always
@@ -66,12 +67,6 @@ spec:
                 proxy_set_header  X-Forwarded-For $proxy_add_x_forwarded_for;
                 proxy_set_header  X-Forwarded-Host $server_name;
                 proxy_set_header  X-Forwarded-Proto https;
-          args:
-            - --resources
-            - uri=/*|roles=tableau
-            - --enable-logging
-            - --enable-json-logging
-            - --verbose
           ports:
             - name: https
               containerPort: 10443
