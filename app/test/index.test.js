@@ -9,7 +9,7 @@ chai.use(require('sinon-chai'))
 chai.use(require('chai-as-promised'))
 
 // Example Url
-// https://analysis.dq.homeoffice.gov.uk/raw/index.js/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
+// https://analysis.dq.homeoffice.gov.uk/raw/index.js/s4/raw/2018/01/12/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
 // E:\RAW_ARCHIVE/20180112/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
 
 // {
