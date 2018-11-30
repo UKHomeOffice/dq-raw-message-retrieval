@@ -9,7 +9,7 @@ chai.use(require('sinon-chai'))
 chai.use(require('chai-as-promised'))
 
 // Example Url
-// https://analysis.dq.homeoffice.gov.uk/raw/get_raw_msg.php/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
+// https://analysis.dq.homeoffice.gov.uk/raw/index.js/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
 // E:\RAW_ARCHIVE/20180112/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
 
 // {
@@ -24,7 +24,7 @@ const valid_zip_buffer = Buffer.from('UEsDBAoAAAAAADJUK0wAAAAAAAAAAAAAAAAIABAAZm
 const mock_s3 = params => {
     return {
       promise: () => new Promise((resolve, reject) => {
-      if(params.Key === "zip_file_fixture.zip")
+      if(params.Key === "s4/raw/YYYY/MM/DD/zip_file_fixture.zip")
         return resolve({Body:valid_zip_buffer})
       return reject("NoSuchKey: The specified key does not exist")
     })
@@ -45,14 +45,14 @@ describe('RMR tool', () => {
   describe('get_file_path_in_zip_from_url', () => {
     it('should return the correct path for the zip from the url', () =>
       expect(app.__get__('get_file_path_in_zip_from_url')
-      ('/app/index.js/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
+      ('/raw/index.js/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
         .to.equal('filedir/filename.txt'))
   })
 
   describe('get_zip_name_from_url', () => {
     it('should return the correct zip name from the url', () =>
       expect(app.__get__('get_zip_name_from_url')
-      ('/app/index.js/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
+      ('/raw/index.js/s4/raw/YYYY/MM/DD/zipfile.zip/filedir/filename.txt'))
         .to.equal('s4/raw/YYYY/MM/DD/zipfile.zip'))
   })
 
@@ -62,50 +62,50 @@ describe('RMR tool', () => {
     })
   });
 
-  // describe('request_hander', () => {
-  //   const res = {
-  //     writeHead: sinon.stub(),
-  //     end: sinon.stub()
-  //   }
-  //   const req = {url: '/app/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename'}
-  //   it('should write the head as html', () =>
-  //     app.__get__('request_handler')(req, res)
-  //       .then(() =>
-  //         expect(res.writeHead).to.be.calledWith(200, {'Content-Type': 'text/html'}))
-  //   )
-  //
-  //   it('should return everything we expect', () =>
-  //     app.__get__('request_handler')(req, res)
-  //       .then(() =>
-  //         expect(res.end).to.be.calledWithMatch('foobar')
-  //       )
-  //   )
-  //   it('should return a 404 for files not found', () =>
-  //     app.__get__('request_handler')({url: 'not_a_file'}, res)
-  //       .then(() =>
-  //         expect(res.writeHead).to.be.calledWithMatch(404)
-  //       )
-  //   )
-  // })
+  describe('request_handler', () => {
+    const res = {
+      writeHead: sinon.stub(),
+      end: sinon.stub()
+    }
+    const req = {url: '/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename'}
+    it('should write the head as html', () =>
+      app.__get__('request_handler')(req, res)
+        .then(() =>
+          expect(res.writeHead).to.be.calledWith(200, {'Content-Type': 'text/html'}))
+    )
 
-  // describe('Browser Tests', () => {
-  //   it('should display zip contents successfully', () =>
-  //     request(app.__get__('http_server'))
-  //       .get('/app/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename')
-  //       .expect(200)
-  //       .then(response =>
-  //         expect(response.text).to.have.string('foobar')
-  //       )
-  //   )
-  //   it('should 404 on unknown path in zip', () =>
-  //     request(app.__get__('http_server'))
-  //       .get('/app/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/nothere')
-  //       .expect(404)
-  //   )
-  //   it('should 404 on unknown path to zip', () =>
-  //     request(app.__get__('http_server'))
-  //       .get('/app/index.js/s4/raw/YYYY/MM/DD/qqnothere.zip/filedir/filename')
-  //       .expect(404)
-  //   )
-  // })
+    it('should return everything we expect', () =>
+      app.__get__('request_handler')(req, res)
+        .then(() =>
+          expect(res.end).to.be.calledWithMatch('foobar')
+        )
+    )
+    it('should return a 404 for files not found', () =>
+      app.__get__('request_handler')({url: 'not_a_file'}, res)
+        .then(() =>
+          expect(res.writeHead).to.be.calledWithMatch(404)
+        )
+    )
+  })
+
+  describe('Browser Tests', () => {
+    it('should display zip contents successfully', () =>
+      request(app.__get__('http_server'))
+        .get('/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename')
+        .expect(200)
+        .then(response =>
+          expect(response.text).to.have.string('foobar')
+        )
+    )
+    it('should 404 on unknown path in zip', () =>
+      request(app.__get__('http_server'))
+        .get('/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/nothere')
+        .expect(404)
+    )
+    it('should 404 on unknown path to zip', () =>
+      request(app.__get__('http_server'))
+        .get('/raw/index.js/s4/raw/YYYY/MM/DD/nothere.zip/filedir/filename')
+        .expect(404)
+    )
+  })
 })
