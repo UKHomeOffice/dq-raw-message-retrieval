@@ -11,6 +11,7 @@ metadata:
     ingress.kubernetes.io/force-ssl-redirect: "true"
     ingress.kubernetes.io/secure-backends: "true"
     kubernetes.io/tls-acme: "true"
+    ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   tls:
   - hosts:
