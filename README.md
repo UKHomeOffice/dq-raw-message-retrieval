@@ -39,3 +39,6 @@ Requires environment variables `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and 
 - Kubernetes
 - Keycloak
 - AWS
+
+## Testing
+- Testing is built into the Docker container build step using the *./app/test* suite by running the *index.test.js* NodeJS script.
