@@ -14,7 +14,7 @@ spec:
   tls:
   - hosts:
     - {{.URL}}
-    secretName: rmr-tls-newcm
+    secretName: rmr-tls-cmio
   rules:
   - host: {{.URL}}
     http:
