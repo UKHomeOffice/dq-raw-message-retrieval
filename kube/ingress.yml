@@ -4,18 +4,17 @@ kind: Ingress
 metadata:
   name: dq-raw-message-retrieval-ingress
   labels:
-    stable.k8s.psg.io/kcm.class: default
+    cert-manager.io/solver: http01
   annotations:
-    stable.k8s.psg.io/kcm.provider: http
+    cert-manager.io/enabled: "true"
     kubernetes.io/ingress.class: "nginx-external"
     ingress.kubernetes.io/force-ssl-redirect: "true"
-    kubernetes.io/tls-acme: "true"
     ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   tls:
   - hosts:
     - {{.URL}}
-    secretName: rmr-tls
+    secretName: rmr-tls-newcm
   rules:
   - host: {{.URL}}
     http:
