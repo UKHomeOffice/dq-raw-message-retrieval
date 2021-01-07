@@ -7,6 +7,13 @@ spec:
     matchLabels:
       name: dq-raw-message-retrieval
   ingress:
-      ports:
+    - ports:
         - protocol: TCP
           port: 8081
+    - from:
+        - podSelector:
+            matchLabels:
+              name: dq-raw-message-retrieval
+      ports:
+        - protocol: TCP
+          port: 3000
