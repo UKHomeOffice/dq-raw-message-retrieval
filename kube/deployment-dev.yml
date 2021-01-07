@@ -78,7 +78,6 @@ spec:
           - --cors-origins=*
           - --enable-login-handler
           - --secure-cookie=true
-          - -http-only-cookie=true
           - --verbose
           - --upstream-timeout=60s
           - --upstream-keepalive-timeout=60s
