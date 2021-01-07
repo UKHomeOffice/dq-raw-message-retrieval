@@ -3,7 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: dq-raw-message-retrieval
-  spec:
+spec:
   replicas: 1
   selector:
     matchLabels:
