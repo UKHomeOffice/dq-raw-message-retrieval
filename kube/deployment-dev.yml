@@ -75,19 +75,9 @@ spec:
           - --listen=0.0.0.0:8081
           - --upstream-url=http://127.0.0.1:3000
           - --upstream-keepalives
-          - --cors-origins=*
           - --enable-login-handler
-          - --secure-cookie=true
-          - -http-only-cookie=true
           - --verbose
-          - --upstream-timeout=60s
-          - --upstream-keepalive-timeout=60s
-          - --upstream-tls-handshake-timeout=60s
-          - --upstream-response-header-timeout=60s
-          - --upstream-expect-continue-timeout=60s
-          - --server-read-timeout=60s
-          - --server-write-timeout=60s
-          - --enable-default-deny=true
+          - --enable-logging
           - --resources=uri=/*|roles=tableau
         ports:
           - name: keycloak
