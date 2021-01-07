@@ -78,6 +78,7 @@ spec:
           - --cors-origins=*
           - --enable-login-handler
           - --secure-cookie=true
+          - -http-only-cookie=true
           - --verbose
           - --upstream-timeout=60s
           - --upstream-keepalive-timeout=60s
@@ -87,7 +88,6 @@ spec:
           - --server-read-timeout=60s
           - --server-write-timeout=60s
           - --enable-default-deny=true
-          - --enable-logging
           - --resources=uri=/*|roles=tableau
         ports:
           - name: keycloak
