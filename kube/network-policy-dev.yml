@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-rmr
+spec:
+  podSelector:
+    matchLabels:
+      name: dq-raw-message-retrieval
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-external
+    - ports:
+      - protocol: TCP
+        port: 8081
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: ingress-internal
+      ports:
+        - protocol: TCP
+          port: 8081
+    - from:
+        - podSelector:
+            matchLabels:
+              name: dq-raw-message-retrieval
+      ports:
+        - protocol: TCP
+          port: 3000

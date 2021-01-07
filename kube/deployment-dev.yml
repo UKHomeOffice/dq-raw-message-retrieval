@@ -45,22 +45,50 @@ spec:
         ports:
           - containerPort: 3000
 
-      - name: proxy
-        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b58
+      - name: keycloak-proxy
+        image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
+        imagePullPolicy: IfNotPresent
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
         env:
-          - name: PROXY_SERVICE_HOST
-            value: 'http://127.0.0.1'
-          - name: PROXY_SERVICE_PORT
-            value: '3000'
-          - name: LOG_FORMAT_NAME
-            value: 'json'
-          - name: NAXSI_USE_DEFAULT_RULES
-            value: 'FALSE'
-          - name: ENABLE_UUID_PARAM
-            value: 'FALSE'
+          - name: PROXY_ENABLE_CORS_GLOBAL
+            value: 'true'
+          - name: PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_CLIENT_SECRET
+          - name: PROXY_DISCOVERY_URL
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_DISCOVERY
+        args:
+          - --client-id=raw-message-retrieval
+          - --client-secret=["$(PROXY_CLIENT_SECRET)"]
+          - --discovery-url=["$(PROXY_DISCOVERY_URL)"]
+          - --listen=0.0.0.0:8081
+          - --upstream-url=http://127.0.0.1:3000
+          - --upstream-keepalives
+          - --cors-origins=*
+          - --enable-login-handler
+          - --secure-cookie=true
+          - -http-only-cookie=true
+          - --verbose
+          - --upstream-timeout=60s
+          - --upstream-keepalive-timeout=60s
+          - --upstream-tls-handshake-timeout=60s
+          - --upstream-response-header-timeout=60s
+          - --upstream-expect-continue-timeout=60s
+          - --server-read-timeout=60s
+          - --server-write-timeout=60s
+          - --enable-default-deny=true
+          - --resources=uri=/*|roles=tableau
         ports:
-          - name: https
-            containerPort: 10443
+          - name: keycloak
+            containerPort: 8081
