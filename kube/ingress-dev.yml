@@ -10,7 +10,6 @@ metadata:
     ingress.kubernetes.io/force-ssl-redirect: "true"
     kubernetes.io/ingress.class: "nginx-external"
     ingress.kubernetes.io/whitelist-source-range: {{ .WHITELIST_RANGES }}
-    ingress.kubernetes.io/backend-protocol: "HTTPS"
 spec:
   tls:
   - hosts:
