@@ -70,8 +70,8 @@ spec:
                 key: KEYCLOAK_DISCOVERY
         args:
           - --client-id=raw-message-retrieval
-          - --client-secret=["$(PROXY_CLIENT_SECRET)"]
-          - --discovery-url=["$(PROXY_DISCOVERY_URL)"]
+          - --client-secret=$(PROXY_CLIENT_SECRET)
+          - --discovery-url=$(PROXY_DISCOVERY_URL)
           - --listen=0.0.0.0:8081
           - --upstream-url=http://127.0.0.1:3000
           - --upstream-keepalives
