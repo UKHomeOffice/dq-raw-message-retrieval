@@ -88,7 +88,6 @@ spec:
           - --server-write-timeout=60s
           - --enable-default-deny=true
           - --enable-logging
-          - --enable-json-logging
           - --resources=uri=/*|roles=tableau
         ports:
           - name: keycloak
