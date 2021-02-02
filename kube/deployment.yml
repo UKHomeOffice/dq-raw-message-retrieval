@@ -79,7 +79,7 @@ spec:
           - --verbose
 
       - name: proxy
-        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b58
+        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b76
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
