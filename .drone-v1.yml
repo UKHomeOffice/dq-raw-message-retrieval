@@ -55,7 +55,7 @@ steps:
   - export KEYCLOAK_CLIENT_SECRET=$$DEV_KEYCLOAK_CLIENT_SECRET
   - export KEYCLOAK_DISCOVERY=$$DEV_KEYCLOAK_DISCOVERY
   - export WHITELIST_RANGES=$$WHITELIST_RANGES_NOTPROD
-  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/promote-dev.yml -f kube/service.yml -f kube/ingress-dev.yml
+  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment-dev.yml -f kube/service.yml -f kube/ingress-dev.yml
   environment:
     DEV_AWS_ACCESS_KEY_ID:
       from_secret: DEV_AWS_ACCESS_KEY_ID
@@ -92,7 +92,7 @@ steps:
   - export AWS_SECRET_ACCESS_KEY=$$PROD_AWS_SECRET_ACCESS_KEY
   - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
   - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
-  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/promote.yml -f kube/service.yml -f kube/ingress.yml
+  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
   environment:
     ENV: prod
     INSECURE_SKIP_TLS_VERIFY: true
