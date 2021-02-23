@@ -1,4 +1,4 @@
-FROM node:alpine3.13 as builder
+FROM node:14-alpine3.13 as builder
 COPY package* ./
 RUN npm install
 COPY . .
