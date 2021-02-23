@@ -7,8 +7,6 @@ RUN npm prune --production
 
 FROM node:10-alpine as runner
 
-RUN apk update
-
 ENV USERMAP_UID 1000
 
 WORKDIR /app
