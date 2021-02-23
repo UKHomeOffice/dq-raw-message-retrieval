@@ -1,4 +1,4 @@
-FROM node:10-alpine as builder
+FROM node:alpine3.13 as builder
 COPY package* ./
 RUN npm install
 COPY . .
@@ -6,6 +6,8 @@ RUN npm test
 RUN npm prune --production
 
 FROM node:10-alpine as runner
+
+RUN apk update
 
 ENV USERMAP_UID 1000
 
