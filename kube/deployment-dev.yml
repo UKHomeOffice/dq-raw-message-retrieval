@@ -44,6 +44,40 @@ spec:
             value: '3000'
         ports:
           - containerPort: 3000
+
+      - name: keycloak-proxy
+        image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+        resources:
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        env:
+          - name: PROXY_CLIENT_ID
+            value: raw-message-retrieval
+          - name: PROXY_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_CLIENT_SECRET
+          - name: PROXY_LISTEN
+            value: 0.0.0.0:8081
+          - name: PROXY_DISCOVERY_URL
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: KEYCLOAK_DISCOVERY
+          - name: PROXY_UPSTREAM_URL
+            value: http://127.0.0.1:3000
+        args:
+          - --resources
+          - uri=/*|roles=tableau
+          - --enable-logging
+          - --enable-json-logging
+          - --verbose
+
       - name: proxy
         image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b87
         securityContext:
@@ -53,7 +87,7 @@ spec:
           - name: PROXY_SERVICE_HOST
             value: 'http://127.0.0.1'
           - name: PROXY_SERVICE_PORT
-            value: '3000'
+            value: '8081'
           - name: LOG_FORMAT_NAME
             value: 'json'
           - name: NAXSI_USE_DEFAULT_RULES
