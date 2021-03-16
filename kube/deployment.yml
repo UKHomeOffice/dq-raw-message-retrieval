@@ -46,7 +46,7 @@ spec:
           - containerPort: 3000
 
       - name: keycloak-proxy
-        image: quay.io/ukhomeofficedigital/go-keycloak-proxy:v2.3.0
+        image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
