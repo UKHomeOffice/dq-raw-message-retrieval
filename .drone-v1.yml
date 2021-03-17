@@ -34,7 +34,8 @@ steps:
   pull: always
   environment:
     #NOTE: Image name can't be a variable here!
-    IMAGE_NAME: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
+    # IMAGE_NAME: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
+    IMAGE_NAME: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:master-268
     LOCAL_IMAGE: false
     SHOW_ALL_VULNERABILITIES: true
     TOLERATE: medium
