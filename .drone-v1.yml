@@ -30,7 +30,7 @@ steps:
 #     - push
 - name: trivy
   pull: if-not-exists
-  image: quay.io/ukhomeofficedigital/aquasec/trivy
+  image: aquasec/trivy
   commands:
   - trivy
   when:
