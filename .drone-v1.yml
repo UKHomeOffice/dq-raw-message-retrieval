@@ -28,15 +28,14 @@ steps:
 #   when:
 #     event:
 #     - push
-
-  - name: trivy_scan:
-    image: docker:18.05
-    environment:
-      - DOCKER_HOST=tcp://172.17.0.1:2375
-    commands:
-      - docker run --rm -v $(pwd):/data -w /data aquasec/trivy trivy python:3.4-alpine
-    when:
-      event: push
+- name: trivy
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/aquasec/trivy
+  commands:
+  - trivy
+  when:
+    event:
+    - push
 
 # - name: deploy_to_dev
 #   pull: if-not-exists
