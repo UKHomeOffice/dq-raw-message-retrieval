@@ -29,7 +29,7 @@ steps:
 #     event:
 #     - push
 
-trivy_scan:
+- name: trivy_scan:
   image: docker:18.05
   environment:
     - DOCKER_HOST=tcp://172.17.0.1:2375
