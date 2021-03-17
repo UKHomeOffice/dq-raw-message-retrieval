@@ -37,7 +37,7 @@ steps:
     # IMAGE_NAME: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
     IMAGE_NAME: quay.io/ukhomeofficedigital/dq-raw-message-retrieval:kube-deploy-187
     LOCAL_IMAGE: false
-    SHOW_ALL_VULNERABILITIES: false
+    SHOW_ALL_VULNERABILITIES: true
     TOLERATE: medium
     FAIL_ON_DETECTION: false
   when:
