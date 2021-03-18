@@ -29,14 +29,25 @@ steps:
 #     event:
 #     - push
 
+
+
 - name: build_trivy
   pull: if-not-exists
-  image: docker:18.09
+  image: aquasec/trivy
   commands:
-  - docker build -t centos:7 .
+  - echo "hello"
   when:
     event:
     - push
+
+# - name: build_trivy
+#   pull: if-not-exists
+#   image: docker:18.09
+#   commands:
+#   - docker build -t centos:7 .
+#   when:
+#     event:
+#     - push
 
 
 
