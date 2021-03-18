@@ -8,26 +8,26 @@ platform:
   arch: amd64
 
 steps:
-# - name: build_and_push_image
-#   pull: if-not-exists
-#   image: plugins/docker
-#   settings:
-#     context: app
-#     dockerfile: app/Dockerfile
-#     force_tag: true
-#     registry: quay.io
-#     repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
-#     tags:
-#     - ${DRONE_COMMIT_SHA}
-#     - ${DRONE_BRANCH}-${DRONE_BUILD_NUMBER}
-#   environment:
-#     DOCKER_PASSWORD:
-#       from_secret: docker_password
-#     DOCKER_USERNAME:
-#       from_secret: docker_username
-#   when:
-#     event:
-#     - push
+- name: build_and_push_image
+  pull: if-not-exists
+  image: plugins/docker
+  settings:
+    context: app
+    dockerfile: app/Dockerfile
+    force_tag: true
+    registry: quay.io
+    repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
+    tags:
+    - ${DRONE_COMMIT_SHA}
+    - ${DRONE_BRANCH}-${DRONE_BUILD_NUMBER}
+  environment:
+    DOCKER_PASSWORD:
+      from_secret: docker_password
+    DOCKER_USERNAME:
+      from_secret: docker_username
+  when:
+    event:
+    - push
 
 
 
@@ -39,8 +39,6 @@ steps:
   when:
     event:
     - push
-
-
 
 
 
