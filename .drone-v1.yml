@@ -35,7 +35,7 @@ steps:
   pull: if-not-exists
   image: aquasec/trivy
   commands:
-  - trivy --exit-code 0 --severity HIGH --no-progress centos:7
+  - trivy --exit-code 1 --severity HIGH --no-progress centos:7
   # - trivy quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
   when:
     event:
