@@ -33,7 +33,7 @@ steps:
   pull: if-not-exists
   image: aquasec/trivy
   commands:
-  - trivy --exit-code 1 --no-progress quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
+  - trivy --ignore-unfixed --exit-code 1 --no-progress quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
   when:
     branch:
       exclude:
