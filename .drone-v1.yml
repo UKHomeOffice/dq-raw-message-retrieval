@@ -32,6 +32,8 @@ steps:
 - name: build_trivy
   pull: if-not-exists
   image: docker:18.09
+  commands:
+  - docker build -t centos:7 centos7
   when:
     event:
     - push
