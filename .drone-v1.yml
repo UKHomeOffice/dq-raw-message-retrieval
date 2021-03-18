@@ -35,6 +35,9 @@ steps:
   commands:
   - trivy --exit-code 1 --no-progress quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
   when:
+    branch:
+      exclude:
+      - master
     event:
     - push
 
