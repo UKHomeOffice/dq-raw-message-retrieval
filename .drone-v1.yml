@@ -33,7 +33,7 @@ steps:
   pull: if-not-exists
   image: docker:18.09
   commands:
-  - docker build -t centos:7
+  - docker build -t centos:7 .
   when:
     event:
     - push
