@@ -35,7 +35,7 @@ steps:
   pull: if-not-exists
   image: aquasec/trivy
   commands:
-  - echo "hello"
+  - trivy alpine:3.12.4
   when:
     event:
     - push
