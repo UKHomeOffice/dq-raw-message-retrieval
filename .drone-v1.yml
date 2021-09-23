@@ -17,7 +17,6 @@ environment:
 
 x-anchors:
   retrieve-vault-aws-secrets: &retrieve-vault-aws-secrets
-    - set -e
     # Retrive vault secrets
     - vault read aws_dacc_dq/creds/drone > aws_creds.json
     - export LEASE_ID=$(cat aws_creds.json | grep lease_id | awk -F ' ' '{print $2}')
@@ -30,13 +29,11 @@ x-anchors:
     - sleep 10
 
   retrieve-app-user-keys: &retrieve-app-user-keys
-    - set -e
     - source set_drone_secrets.sh
-    - echo "export AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM-KEY-ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
-    - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM-SECURE-KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
+    - echo "export AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
+    - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM_SECURE_KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
 
   rotate-app-user-aws-key: &rotate-app-user-aws-key
-    - set -e
     - unset $AWS_ACCESS_KEY_ID && unset $AWS_SECRET_ACCESS_KEY
     - source keystorotate.sh
     - aws iam create-access-key > new-key.json
@@ -83,7 +80,7 @@ steps:
     event:
     - push
 
-- name: retrieve-aws-secrets-np
+- name: retrieve_aws_secrets_np
   pull: if-not-exists
   image: *vault-image
   commands:
@@ -97,7 +94,7 @@ steps:
     event:
       - push
 
-- name: retrieve-app-user-keys-np
+- name: retrieve_app_user_keys_np
   pull: if-not-exists
   image: *aws-cli
   commands:
@@ -106,7 +103,7 @@ steps:
     event:
       - push
 
-- name: rotate-aws-keys-np
+- name: rotate_aws_keys_np
   pull: if-not-exists
   image: *aws-cli
   commands:
@@ -155,7 +152,7 @@ steps:
     event:
     - push
 
-- name: retrieve-aws-secrets-prod
+- name: retrieve_aws_secrets_prod
   pull: if-not-exists
   image: *vault-image
   commands:
@@ -171,7 +168,7 @@ steps:
     target:
     - production
 
-- name: retrieve-app-user-keys-prod
+- name: retrieve_app_user_keys_prod
   pull: if-not-exists
   image: *aws-cli
   commands:
@@ -182,7 +179,7 @@ steps:
     target:
     - production
 
-- name: rotate-aws-keys-prod
+- name: rotate_aws_keys_prod
   pull: if-not-exists
   image: *aws-cli
   commands:
