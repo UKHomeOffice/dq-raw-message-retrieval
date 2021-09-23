@@ -14,6 +14,7 @@ platform:
 environment:
   SSM_KEY_ID: kubernetes-rmr-user-id-apps-notprod-dq
   SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-notprod-dq
+  APP_USER_NAME: iam-user-rmr-apps-notprod-dq
 
 x-anchors:
   retrieve-vault-aws-secrets: &retrieve-vault-aws-secrets
@@ -29,24 +30,31 @@ x-anchors:
     # Since AWS is eventually consistent we need to sleep a little while so the AWS key is created and made available
     - sleep 10
 
-  retrieve-app-user-keys: &retrieve-app-user-keys
-    - source set_drone_secrets.sh
-    - echo "export AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" > keystorotate.sh
-    - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM_SECURE_KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
-    - echo "export AWS_DEFAULT_REGION=eu-west-2" >> keystorotate.sh
-
   rotate-app-user-aws-key: &rotate-app-user-aws-key
-    - unset $AWS_ACCESS_KEY_ID && unset $AWS_SECRET_ACCESS_KEY
-    - source keystorotate.sh
-    - aws iam create-access-key > new-key.json
+    - source set_drone_secrets.sh
+    - echo "export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')"
+    # - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM_SECURE_KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
+    # - echo "export AWS_DEFAULT_REGION=eu-west-2" >> keystorotate.sh
+    - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
     - echo "export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" > new_iam_secret.sh
     - echo "export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" >> new_iam_secret.sh
-    - aws iam delete-access-key --access-key-id $AWS_ACCESS_KEY_ID
-    - source new_iam_secret.sh
-    - unset $AWS_ACCESS_KEY_ID && unset $AWS_SECRET_ACCESS_KEY
-    - source set_drone_secrets.sh
+    - aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID
     - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
     - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
+    - sleep 10
+
+  # rotate-app-user-aws-key: &rotate-app-user-aws-key
+  #   - unset $AWS_ACCESS_KEY_ID && unset $AWS_SECRET_ACCESS_KEY
+  #   - source keystorotate.sh
+  #   - aws iam create-access-key > new-key.json
+  #   - echo "export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" > new_iam_secret.sh
+  #   - echo "export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" >> new_iam_secret.sh
+  #   - aws iam delete-access-key --access-key-id $AWS_ACCESS_KEY_ID
+  #   - source new_iam_secret.sh
+  #   - unset $AWS_ACCESS_KEY_ID && unset $AWS_SECRET_ACCESS_KEY
+  #   - source set_drone_secrets.sh
+  #   - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
+  #   - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
 
 steps:
 - name: build_and_push_image
@@ -96,14 +104,14 @@ steps:
     event:
       - push
 
-- name: retrieve_app_user_keys_np
-  pull: if-not-exists
-  image: *aws-cli
-  commands:
-    *retrieve-app-user-keys
-  when:
-    event:
-      - push
+# - name: retrieve_app_user_keys_np
+#   pull: if-not-exists
+#   image: *aws-cli
+#   commands:
+#     *retrieve-app-user-keys
+#   when:
+#     event:
+#       - push
 
 - name: rotate_aws_keys_np
   pull: if-not-exists
@@ -170,16 +178,16 @@ steps:
     target:
     - production
 
-- name: retrieve_app_user_keys_prod
-  pull: if-not-exists
-  image: *aws-cli
-  commands:
-    *retrieve-app-user-keys
-  when:
-    event:
-    - promote
-    target:
-    - production
+# - name: retrieve_app_user_keys_prod
+#   pull: if-not-exists
+#   image: *aws-cli
+#   commands:
+#     *retrieve-app-user-keys
+#   when:
+#     event:
+#     - promote
+#     target:
+#     - production
 
 - name: rotate_aws_keys_prod
   pull: if-not-exists
