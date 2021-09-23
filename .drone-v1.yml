@@ -32,7 +32,7 @@ x-anchors:
 
   rotate-app-user-aws-key: &rotate-app-user-aws-key
     - source set_drone_secrets.sh
-    - echo "export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')"
+    - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
     # - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM_SECURE_KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
     # - echo "export AWS_DEFAULT_REGION=eu-west-2" >> keystorotate.sh
     - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
