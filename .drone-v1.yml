@@ -183,7 +183,7 @@ steps:
     target:
     - production
 
-- name: rotate-aws-keys-np
+- name: rotate-aws-keys-prod
   pull: if-not-exists
   image: *aws-cli
   commands:
