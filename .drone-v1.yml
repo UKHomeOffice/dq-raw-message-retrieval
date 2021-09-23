@@ -1,6 +1,6 @@
 ---
 global-variables:
-  aws-cli: quay.io/ukhomeofficedigital/dq-docker-terragrunt:v0.23.18
+  aws-cli: &aws-cli quay.io/ukhomeofficedigital/dq-docker-terragrunt:v0.23.18
   vault-image: &vault-image quay.io/ukhomeofficedigital/hashicorp-vault:1.6.0
 
 kind: pipeline
