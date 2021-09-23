@@ -42,6 +42,7 @@ x-anchors:
     - source new_iam_secret.sh
     - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
     - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
+    - cat new_iam_secret.sh
     - sleep 10
 
   # rotate-app-user-aws-key: &rotate-app-user-aws-key
