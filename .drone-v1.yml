@@ -25,19 +25,21 @@ x-anchors:
     # Get the AWS credentials
     - echo "export AWS_ACCESS_KEY_ID=$(cat aws_creds.json | grep access_key | awk -F ' ' '{print $2}')" > set_drone_secrets.sh
     - echo "export AWS_SECRET_ACCESS_KEY=$(cat aws_creds.json | grep secret_key | awk -F ' ' '{print $2}')" >> set_drone_secrets.sh
+    - echo "export AWS_DEFAULT_REGION=eu-west-2" >> set_drone_secrets.sh
     # Since AWS is eventually consistent we need to sleep a little while so the AWS key is created and made available
     - sleep 10
 
   retrieve-app-user-keys: &retrieve-app-user-keys
     - source set_drone_secrets.sh
-    - echo "export AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
+    - echo "export AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" > keystorotate.sh
     - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM_SECURE_KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
+    - echo "export AWS_DEFAULT_REGION=eu-west-2" >> keystorotate.sh
 
   rotate-app-user-aws-key: &rotate-app-user-aws-key
     - unset $AWS_ACCESS_KEY_ID && unset $AWS_SECRET_ACCESS_KEY
     - source keystorotate.sh
     - aws iam create-access-key > new-key.json
-    - echo "export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" >> new_iam_secret.sh
+    - echo "export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" > new_iam_secret.sh
     - echo "export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" >> new_iam_secret.sh
     - aws iam delete-access-key --access-key-id $AWS_ACCESS_KEY_ID
     - source new_iam_secret.sh
