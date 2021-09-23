@@ -36,12 +36,13 @@ x-anchors:
     # - echo "export AWS_SECRET_ACCESS_KEY=$(aws ssm get-parameters --name $SSM_SECURE_KEY --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')" >> keystorotate.sh
     # - echo "export AWS_DEFAULT_REGION=eu-west-2" >> keystorotate.sh
     - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
-    - echo "export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" > new_iam_secret.sh
-    - echo "export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')" >> new_iam_secret.sh
+    - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
+    - export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
     - aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME
-    - source new_iam_secret.sh
     - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
     - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
+    - echo "NEW_AWS_ACCESS_KEY_ID=$(echo $NEW_AWS_ACCESS_KEY_ID | base64)" > new_iam_secret.sh
+    - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
     - cat new_iam_secret.sh
     - sleep 10
 
@@ -134,6 +135,7 @@ steps:
   - export KUBE_TOKEN=$$DEV_KUBE_TOKEN
   - export BUCKET_NAME=$$DEV_BUCKET_NAME
   - export AWS_ACCESS_KEY_ID=$$NEW_AWS_ACCESS_KEY_ID
+  - echo $$AWS_ACCESS_KEY_ID
   - export AWS_SECRET_ACCESS_KEY=$$NEW_AWS_SECRET_ACCESS_KEY
   - export KEYCLOAK_CLIENT_SECRET=$$DEV_KEYCLOAK_CLIENT_SECRET
   - export KEYCLOAK_DISCOVERY=$$DEV_KEYCLOAK_DISCOVERY
