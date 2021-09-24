@@ -11,10 +11,10 @@ platform:
   os: linux
   arch: amd64
 
-environment:
-  SSM_KEY_ID: kubernetes-rmr-user-id-apps-${ENV}-dq
-  SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-${ENV}-dq
-  APP_USER_NAME: iam-user-rmr-apps-${ENV}-dq
+# environment:
+#   SSM_KEY_ID: kubernetes-rmr-user-id-apps-${ENV}-dq
+#   SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-${ENV}-dq
+#   APP_USER_NAME: iam-user-rmr-apps-${ENV}-dq
 
 x-anchors:
   retrieve-vault-aws-secrets: &retrieve-vault-aws-secrets
@@ -32,18 +32,17 @@ x-anchors:
 
   rotate-app-user-aws-key: &rotate-app-user-aws-key
     - source set_drone_secrets.sh
-    - export ENV=$ENV
     # get app key id from ssm
-    - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
+    - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name kubernetes-rmr-user-id-apps-${ENV}-dq --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
     # generate new key & id for app user
-    - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
+    - aws iam create-access-key --user-name iam-user-rmr-apps-${ENV}-dq > new-key.json
     - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
     - export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
     # delete old iam key &id
-    - aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME
+    - aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name iam-user-rmr-apps-${ENV}-dq
     # push new key & id to SSM
-    - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
-    - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
+    - aws ssm put-parameter --name kubernetes-rmr-user-id-apps-${ENV}-dq --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
+    - aws ssm put-parameter --name kubernetes-rmr-user-key-apps-${ENV}-dq --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
     # encode new key and id
     - echo "NEW_AWS_ACCESS_KEY_ID=$(echo $NEW_AWS_ACCESS_KEY_ID | base64)" > new_iam_secret.sh
     - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
@@ -101,6 +100,7 @@ steps:
   pull: if-not-exists
   image: *aws-cli
   commands:
+    - export ENV=notprod
     *rotate-app-user-aws-key
   environment:
     ENV: notprod
