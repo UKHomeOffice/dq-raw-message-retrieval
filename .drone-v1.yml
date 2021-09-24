@@ -11,11 +11,6 @@ platform:
   os: linux
   arch: amd64
 
-# environment:
-#   SSM_KEY_ID: kubernetes-rmr-user-id-apps-${ENV}-dq
-#   SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-${ENV}-dq
-#   APP_USER_NAME: iam-user-rmr-apps-${ENV}-dq
-
 x-anchors:
   retrieve-vault-aws-secrets: &retrieve-vault-aws-secrets
     # Retrive vault secrets
@@ -168,7 +163,9 @@ steps:
   commands:
     *rotate-app-user-aws-key
   environment:
-    ENV: prod
+    SSM_KEY_ID: kubernetes-rmr-user-id-apps-prod-dq
+    SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-prod-dq
+    APP_USER_NAME: iam-user-rmr-apps-prod-dq
   when:
     branch:
     - master
