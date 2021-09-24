@@ -39,8 +39,8 @@ x-anchors:
     - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
     - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
     # encode new key and id
-    - echo "NEW_AWS_ACCESS_KEY_ID=$(echo $NEW_AWS_ACCESS_KEY_ID | base64)" > new_iam_secret.sh
-    - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
+    - echo "NEW_AWS_ACCESS_KEY_ID=$(echo -n $NEW_AWS_ACCESS_KEY_ID | base64)" > new_iam_secret.sh
+    - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo -n $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
     - sleep 10
 
 steps:
@@ -117,7 +117,7 @@ steps:
   - export KEYCLOAK_CLIENT_SECRET=$$DEV_KEYCLOAK_CLIENT_SECRET
   - export KEYCLOAK_DISCOVERY=$$DEV_KEYCLOAK_DISCOVERY
   - export WHITELIST_RANGES=$$WHITELIST_RANGES_NOTPROD
-  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
+  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment-dev.yml -f kube/service.yml -f kube/ingress.yml
   environment:
     DEV_BUCKET_NAME:
       from_secret: DEV_BUCKET_NAME
