@@ -32,7 +32,6 @@ x-anchors:
 
   rotate-app-user-aws-key: &rotate-app-user-aws-key
     - source set_drone_secrets.sh
-    - export ENV=$ENV
     # get app key id from ssm
     - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name kubernetes-rmr-user-id-apps-${ENV}-dq --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
     # generate new key & id for app user
@@ -101,6 +100,7 @@ steps:
   pull: if-not-exists
   image: *aws-cli
   commands:
+    - export ENV=$ENV
     *rotate-app-user-aws-key
   environment:
     ENV: notprod
