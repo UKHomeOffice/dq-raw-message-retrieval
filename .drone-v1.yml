@@ -12,9 +12,9 @@ platform:
   arch: amd64
 
 environment:
-  SSM_KEY_ID: kubernetes-rmr-user-id-apps-notprod-dq
-  SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-notprod-dq
-  APP_USER_NAME: iam-user-rmr-apps-notprod-dq
+  SSM_KEY_ID: kubernetes-rmr-user-id-apps-${ENV}-dq
+  SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-${ENV}-dq
+  APP_USER_NAME: iam-user-rmr-apps-${ENV}-dq
 
 x-anchors:
   retrieve-vault-aws-secrets: &retrieve-vault-aws-secrets
@@ -101,6 +101,8 @@ steps:
   image: *aws-cli
   commands:
     *rotate-app-user-aws-key
+  environment:
+    ENV: notprod
   when:
     event:
       - push
@@ -163,6 +165,8 @@ steps:
   image: *aws-cli
   commands:
     *rotate-app-user-aws-key
+  environment:
+    ENV: prod
   when:
     branch:
     - master
