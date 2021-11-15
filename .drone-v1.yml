@@ -29,12 +29,10 @@ x-anchors:
     - source set_drone_secrets.sh
     # get app key id from ssm
     - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
-    - sleep 5
     # generate new key & id for app user
     - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
     - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
     - export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
-    - sleep 5
     # delete old iam key &id
     - aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME
     # push new key & id to SSM
