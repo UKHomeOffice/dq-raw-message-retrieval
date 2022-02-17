@@ -55,7 +55,7 @@ steps:
     repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
     tags:
     - ${DRONE_COMMIT_SHA}
-    - ${DRONE_BRANCH}-${DRONE_BUILD_NUMBER}
+    - b${DRONE_BUILD_NUMBER}
   environment:
     DOCKER_PASSWORD:
       from_secret: docker_password
