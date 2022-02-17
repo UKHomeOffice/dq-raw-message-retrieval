@@ -187,6 +187,7 @@ steps:
   - export AWS_SECRET_ACCESS_KEY=$$NEW_AWS_SECRET_ACCESS_KEY
   - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
   - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+  - export WHITELIST_RANGES=$$WHITELIST_RANGES_PROD
   - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
   environment:
     ENV: prod
@@ -202,6 +203,8 @@ steps:
       from_secret: PROD_KUBE_SERVER
     PROD_KUBE_TOKEN:
       from_secret: PROD_KUBE_TOKEN
+    WHITELIST_RANGES_PROD:
+      from_secret: WHITELIST_RANGES_PROD
     URL: retrieve-a-raw-message.dq.homeoffice.gov.uk
   when:
     branch:
