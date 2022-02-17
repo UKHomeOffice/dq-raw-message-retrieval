@@ -2,6 +2,7 @@
 global-variables:
   aws-cli: &aws-cli docker.digital.homeoffice.gov.uk/dsa/cdl-terragrunt-docker:11
   vault-image: &vault-image quay.io/ukhomeofficedigital/hashicorp-vault:1.6.0
+  trivy-image: &trivy-image quay.io/ukhomeofficedigital/trivyscanner:master
 
 kind: pipeline
 name: default
@@ -67,7 +68,7 @@ steps:
 
 - name: trivy_scan
   pull: if-not-exists
-  image: aquasec/trivy
+  image: *rivy-image
   commands:
   - trivy --ignore-unfixed --exit-code 0 --no-progress quay.io/ukhomeofficedigital/dq-raw-message-retrieval:${DRONE_COMMIT_SHA}
   when:
