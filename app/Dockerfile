@@ -17,11 +17,10 @@ COPY index.js .
 
 EXPOSE 3000
 
-RUN npm install
-RUN npm audit fix
-RUN npm install --save-dev mocha@9.2.2
-RUN npm install --save-dev ajv@8.11.0
-RUN npm audit fix
+RUN npm install && \
+    npm install --save-dev mocha@9.2.2 && \
+    npm install --save-dev ajv@8.11.0 && \
+    npm audit fix
 
 USER ${USERMAP_UID}
 
