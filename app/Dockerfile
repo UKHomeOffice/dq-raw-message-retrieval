@@ -17,6 +17,12 @@ COPY index.js .
 
 EXPOSE 3000
 
+RUN npm install
+RUN npm audit fix
+RUN npm install --save-dev mocha@9.2.2
+RUN npm install --save-dev ajv@8.11.0
+RUN npm audit fix
+
 USER ${USERMAP_UID}
 
 ENV AWS_ACCESS_KEY_ID ${AWS_ACCESS_KEY_ID}
@@ -24,9 +30,3 @@ ENV AWS_SECRET_ACCESS_KEY ${AWS_SECRET_ACCESS_KEY}
 ENV BUCKET_NAME ${BUCKET_NAME}
 
 CMD ["npm","start"]
-
-RUN npm install
-RUN npm audit fix
-RUN npm install --save-dev mocha@9.2.2
-RUN npm install --save-dev ajv@8.11.0
-RUN npm audit fix
