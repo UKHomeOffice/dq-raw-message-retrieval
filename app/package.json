@@ -36,7 +36,7 @@
     "sinon": "^4.1.4",
     "sinon-chai": "^2.14.0",
     "supertest": "^3.0.0",
-    "mimimist": "1.2.6",
+    "minimist": "1.2.6",
     "ansi-regex": "3.0.1"
   }
 }
