@@ -19,7 +19,8 @@
     "aws-sdk": "^2.364.0"
   },
   "devDependencies": {
-    "ajv": "^5.0.0",
+    "ajv": "^8.11.0",
+    "ansi-regex": "3.0.1",
     "chai": "^4.1.2",
     "chai-as-promised": "^7.1.1",
     "eslint": "^5.9.0",
@@ -31,12 +32,11 @@
     "eslint-plugin-standard": "^3.0.1",
     "flatted": "^2.0.0",
     "just-extend": "^4.0.0",
-    "mocha": "^4.1.0",
-    "rewire": "^4.0.1",
+    "minimist": "1.2.6",
+    "mocha": "^10.0.0",
+    "rewire": "^6.0.0",
     "sinon": "^4.1.4",
     "sinon-chai": "^2.14.0",
-    "supertest": "^3.0.0",
-    "minimist": "1.2.6",
-    "ansi-regex": "3.0.1"
+    "supertest": "^3.0.0"
   }
 }
