@@ -1,11 +1,11 @@
-FROM node:14-alpine as builder
+FROM node:alpine3.16 as builder
 COPY package* ./
 RUN npm install
 COPY . .
 RUN npm test
 RUN npm prune --production
 
-FROM node:14-alpine as runner
+FROM node:alpine3.16 as runner
 
 ENV USERMAP_UID 1000
 
