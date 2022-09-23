@@ -8,7 +8,7 @@ module.exports = {
   pg: {
     user: process.env.PGUSER || 'postgres',
     host: process.env.PGHOST || 'localhost',
-    database: process.env.PGDATABASE || 'internal_tableau',
+    database: process.env.PGDATABASE || 'test',
     password: process.env.PGPASSWORD || '',
     port: process.env.PGPORT || 5432
   }
