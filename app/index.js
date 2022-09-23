@@ -1,10 +1,12 @@
-const AWS = require('aws-sdk')
-const http = require('http')
+const { S3 } = require('aws-sdk')
 const admzip = require('adm-zip')
+const express = require('express')
+const db = require('./db')
 const {BUCKET_NAME} = process.env
 
+const app = express()
 
-let s3 = new AWS.S3({
+let s3 = new S3({
   logger: console,
   stats: {
     retries: true,
@@ -19,34 +21,53 @@ let s3 = new AWS.S3({
   }
 })
 
-const get_zip_name_from_url = url => /.*\/(.*\/.*\/.*\/.*\/.*\/.*)\/.*\/.*$/.exec(url)[1]
-
-const get_file_path_in_zip_from_url = url => /.*\/(.*\/.*)$/.exec(url)[1]
-
 const read_file_from_zip_buffer = (buffer, file_path) =>
   new admzip(buffer).readAsText(file_path)
 
-const request_handler = async (req, res) => {
-  try {
-    const file_path = get_file_path_in_zip_from_url(req.url);
-    const zip_name = get_zip_name_from_url(req.url);
+app.get('/raw/index.js/s4/raw/:year/:month/:day/:zipFile/:fileDir/:fileName', async function(req, res) {
+    try {
+      const file_path = `${req.params.fileDir}/${req.params.fileName}`
+      const zip_name = `s4/raw/${req.params.year}/${req.params.month}/${req.params.day}/${req.params.zipFile}`
 
-    const payload = await s3.getObject({ Key: zip_name }).promise()
-      .then(response => read_file_from_zip_buffer(response.Body, file_path))
-    if (payload.length === 0)
-      throw('Not Found')
-    res.writeHead(200, {'Content-Type': 'text/html'})
-    res.end(templated_response(payload))
-  }
-  catch (e) {
-    res.writeHead(404)
-    res.end(e.toString())
-  }
-}
+      const payload = await s3.getObject({ Key: zip_name }).promise()
+        .then(response => read_file_from_zip_buffer(response.Body, file_path))
+      if (payload.length === 0)
+        throw('Not Found')
+      res.status(200, {'Content-Type': 'text/html'})
+      res.send(templated_response(payload))
+    }
+    catch (e) {
+      res.status(404)
+      res.send(e.toString())
+    }
+});
 
-const http_server = http.createServer(request_handler)
+app.get('/raw/guid/:guid', async function(req, res, err) {
+    try {
+      const queryString = `select guid, zip_filename, s3_pathname, filename
+        from rpt_internal.raw_message_index where guid='${req.params.guid}'`
+      const result = await db.query(queryString)
+      if (result.rows.length === 0) {
+        throw('GUID not Found')
+      }
+      const file_path = result.rows[0].filename
+      const zip_name = result.rows[0].s3_pathname
 
-http_server.listen(3000)
+      const payload = await s3.getObject({ Key: zip_name }).promise()
+        .then(response => read_file_from_zip_buffer(response.Body, file_path))
+      if (payload.length === 0) {
+        throw('File not Found')
+      }
+      res.status(200, {'Content-Type': 'text/html'})
+      res.send(templated_response(payload))
+    }
+    catch (e) {
+      res.status(404)
+      res.send(e.toString())
+    }
+});
+
+const server = app.listen(3000);
 
 const templated_response = payload => `<!DOCTYPE html>
 <html>
@@ -57,3 +78,6 @@ ${payload}
 </body>
 </html>
 `
+
+module.exports = server
+
