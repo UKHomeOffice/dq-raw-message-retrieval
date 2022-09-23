@@ -71,6 +71,26 @@ spec:
                 key: KEYCLOAK_DISCOVERY
           - name: PROXY_UPSTREAM_URL
             value: http://127.0.0.1:3000
+          - name: PGHOST
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: PGHOST
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: PGUSER
+          - name: PGDATABASE
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: PGDATABASE
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: dq-raw-message-retrieval
+                key: PGPASSWORD
         args:
           - --resources
           - uri=/*|roles=tableau
