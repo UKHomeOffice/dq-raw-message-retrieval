@@ -45,6 +45,13 @@ x-anchors:
     - sleep 10
 
 steps:
+- name: wait_for_drone
+  pull: if-not-exists
+  image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+  commands:
+  # wait for docker service to be up before running docker build
+  - sleep 10
+
 - name: build_and_push_image
   pull: if-not-exists
   image: plugins/docker
