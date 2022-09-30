@@ -3,6 +3,7 @@ global-variables:
   aws-cli: &aws-cli docker.digital.homeoffice.gov.uk/dsa/cdl-terragrunt-docker:11
   vault-image: &vault-image quay.io/ukhomeofficedigital/hashicorp-vault:1.6.0
   trivy-image: &trivy-image quay.io/ukhomeofficedigital/trivyscanner:master
+  docker-image: &docker-image 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
 
 kind: pipeline
 name: default
@@ -45,25 +46,24 @@ x-anchors:
     - sleep 10
 
 steps:
-- name: wait_for_drone
+- name: build
   pull: if-not-exists
-  image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dind
+  image: *docker-image
   commands:
   # wait for docker service to be up before running docker build
   - sleep 10
+  - n=0; while [ "$n" -lt 60 ] && [ ! docker stats --no-stream ]; do n=$(( n + 1 )); sleep 1; done
+  - docker build -t dq-raw-message-retrieval:$${DRONE_COMMIT_SHA} . --no-cache
 
-- name: build_and_push_image
+- name: push_image
   pull: if-not-exists
-  image: plugins/docker
-  settings:
-    context: app
-    dockerfile: app/Dockerfile
-    force_tag: true
-    registry: quay.io
-    repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
-    tags:
-    - ${DRONE_COMMIT_SHA}
-    - b${DRONE_BUILD_NUMBER}
+  image: *docker-image
+  commands:
+  - docker login -u=$${DOCKER_USERNAME} -p=$${DOCKER_PASSWORD} quay.io
+  - docker tag dq-raw-message-retrieval:$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/dq-raw-message-retrieval:b$${DRONE_BUILD_NUMBER}
+  - docker tag dq-raw-message-retrieval:$${DRONE_COMMIT_SHA} quay.io/ukhomeofficedigital/dq-raw-message-retrieval:$${DRONE_COMMIT_SHA}
+  - docker push quay.io/ukhomeofficedigital/dq-raw-message-retrieval:b$${DRONE_BUILD_NUMBER}
+  - docker push quay.io/ukhomeofficedigital/dq-raw-message-retrieval:$${DRONE_COMMIT_SHA}
   environment:
     DOCKER_PASSWORD:
       from_secret: docker_password
@@ -72,6 +72,27 @@ steps:
   when:
     event:
     - push
+
+#- name: build_and_push_image
+#  pull: if-not-exists
+#  image: plugins/docker
+#  settings:
+#    context: app
+#    dockerfile: app/Dockerfile
+#    force_tag: true
+#    registry: quay.io
+#    repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
+#    tags:
+#    - ${DRONE_COMMIT_SHA}
+#    - b${DRONE_BUILD_NUMBER}
+#  environment:
+#    DOCKER_PASSWORD:
+#      from_secret: docker_password
+#    DOCKER_USERNAME:
+#      from_secret: docker_username
+#  when:
+#    event:
+#    - push
 
 - name: trivy_scan
   pull: if-not-exists
