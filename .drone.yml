@@ -51,7 +51,7 @@ steps:
   image: *docker-image
   commands:
   # wait for docker service to be up before running docker build
-  - sleep 20
+  - sleep 10
   - n=0; while [ "$n" -lt 60 ] && [ ! docker stats --no-stream ]; do n=$(( n + 1 )); sleep 1; done
   - docker build -f app/Dockerfile -t dq-raw-message-retrieval:$${DRONE_COMMIT_SHA} ./app --no-cache
 
@@ -292,4 +292,4 @@ steps:
 
 services:
   - name: docker
-    image: 340268328991.dkr.ecr.eu-west-2.amazonaws.com/acp/dindr
+    image: *docker-image
