@@ -14,6 +14,8 @@ COPY --from=builder node_modules node_modules
 COPY E:\\RAW_ARCHIVE E:\\RAW_ARCHIVE
 COPY package.json .
 COPY index.js .
+COPY config.js .
+COPY db.js .
 COPY minimist/package.json /usr/local/lib/node_modules/npm/node_modules/mkdirp/node_modules/minimist/
 COPY ansi-regex/package.json /usr/local/lib/node_modules/npm/node_modules/yargs/node_modules/ansi-regex/package.json
 
