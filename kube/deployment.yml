@@ -61,7 +61,7 @@ spec:
                 name: dq-raw-message-retrieval
                 key: PGPASSWORD
           - name: PGPORT
-            value: '{{ .PGPORT }}'
+            value: '5000'
           - name: EXPOSED_PORT
             value: '3000'
         ports:
