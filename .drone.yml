@@ -165,8 +165,7 @@ steps:
       from_secret: WHITELIST_RANGES_NOTPROD
     PGHOST:
       from_secret: NOTPROD_PGHOST
-    PGPORT:
-      from_secret: NOTPROD_PGPORT
+    PGPORT: "8091"
     PGUSER:
       from_secret: NOTPROD_PGUSER
     PGDATABASE:
@@ -245,8 +244,7 @@ steps:
     URL: retrieve-a-raw-message.dq.homeoffice.gov.uk
     PGHOST:
       from_secret: PROD_PGHOST
-    PGPORT:
-      from_secret: PROD_PGPORT
+    PGPORT: "8096"
     PGUSER:
       from_secret: PROD_PGUSER
     PGDATABASE:

@@ -60,10 +60,26 @@ spec:
               secretKeyRef:
                 name: dq-raw-message-retrieval
                 key: PGPASSWORD
+          - name: PGPORT
+            value: {{ .PGPORT }}
           - name: EXPOSED_PORT
             value: '3000'
         ports:
           - containerPort: 3000
+
+      - name: opensslsidekick
+        image: quay.io/ukhomeofficedigital/dq-haproxy-openssl-sidekick:b31
+        imagePullPolicy: Always
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+        env:
+        - name: HOST
+          value: '10.3.0.11'
+        - name: PORT
+          value: {{ .PGPORT }}
+        ports:
+          - containerPort: 5000
 
       - name: keycloak-proxy
         image: quay.io/keycloak/keycloak-gatekeeper:10.0.0
