@@ -21,8 +21,11 @@ let s3 = new S3({
   }
 })
 
-const read_file_from_zip_buffer = (buffer, file_path) =>
-  new admzip(buffer).readAsText(file_path)
+const read_file_from_zip_buffer = (buffer, file_path) => {
+  const zf = new admzip(buffer)
+  console.log(zf.getEntries())
+  return zf.readAsText(file_path)
+}
 
 app.get('/raw/index.js/s4/raw/:year/:month/:day/:zipFile/:fileDir/:fileName', async function(req, res) {
     try {
