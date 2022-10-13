@@ -9,28 +9,6 @@ const expect = chai.expect
 chai.use(require('sinon-chai'))
 chai.use(require('chai-as-promised'))
 
-// Example Url
-// https://analysis.dq.homeoffice.gov.uk/raw/index.js/s4/raw/2018/01/12/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
-// E:\RAW_ARCHIVE/20180112/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
-
-// {
-//   key: "20180112/RAW_20180112_1929_1170.zip",
-//     Bucket: "whatever",
-//   locationinsidezip: "1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt"
-//
-// }
-// E:\RAW_ARCHIVE/20180112/RAW_20180112_1929_1170.zip/1929/2018-01-12T19-29-44Z_<GUID>_Raw.txt
-// s3://s3-dq-data-archive-bucket-notprod/s4/raw/2022/09/12/RAW_20220912_1202_0001.zip
-/**
-insert into rpt_internal.raw_message_index(guid, zip_filename,s3_pathname,filename  )
-values( 'acb67779-371e-4b51-a350-7984be32890b',
-        'RAW_20220912_1202_0001.zip',
-        's4/raw/2022/09/12/RAW_20220912_1202_0001.zip',
-        '1201/5.xml');
-
-https://retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk/raw/index.js/s4/raw/2022/09/12/RAW_20220912_1202_0001.zip/1201/5.xml
-https://retrieve-a-raw-message.notprod.dq.homeoffice.gov.uk/raw/guid/acb67779-371e-4b51-a350-7984be32890b
- */
 const valid_zip_buffer = Buffer.from('UEsDBAoAAAAAADJUK0wAAAAAAAAAAAAAAAAIABAAZmlsZWRpci9VWAwAqUBXWn89V1r2ARQAUEsDBBQACAAIADJUK0wAAAAAAAAAAAAAAAAQABAAZmlsZWRpci9maWxlbmFtZVVYDABjPldafz1XWvYBFABLy89PSiziAgBQSwcIR5cssgkAAAAHAAAAUEsBAhUDCgAAAAAAMlQrTAAAAAAAAAAAAAAAAAgADAAAAAAAAAAAQO1BAAAAAGZpbGVkaXIvVVgIAKlAV1p/PVdaUEsBAhUDFAAIAAgAMlQrTEeXLLIJAAAABwAAABAADAAAAAAAAAAAQKSBNgAAAGZpbGVkaXIvZmlsZW5hbWVVWAgAYz5XWn89V1pQSwUGAAAAAAIAAgCMAAAAjQAAAAAA', 'base64')
 
 const mock_s3 = params => {
