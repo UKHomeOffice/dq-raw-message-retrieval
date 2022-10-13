@@ -23,7 +23,6 @@ let s3 = new S3({
 
 const read_file_from_zip_buffer = (buffer, file_path) => {
   const zf = new admzip(buffer)
-  console.log(zf.getEntries())
   return zf.readAsText(file_path)
 }
 
@@ -51,8 +50,6 @@ app.get('/raw/guid/:guid', async function(req, res, err) {
         from rpt_internal.raw_message_index where guid='${req.params.guid}'`
       const result = await db.query(queryString)
       if (result.rows.length === 0) {
-        console.log('GUID not Found')
-        console.log(result.rows)
         throw('GUID not Found')
       }
       const file_path = result.rows[0].filename
@@ -61,7 +58,6 @@ app.get('/raw/guid/:guid', async function(req, res, err) {
       const payload = await s3.getObject({ Key: zip_name }).promise()
         .then(response => read_file_from_zip_buffer(response.Body, file_path))
       if (payload.length === 0) {
-        console.log('File not Found')
         throw('File not Found')
       }
       res.status(200, {'Content-Type': 'text/html'})
