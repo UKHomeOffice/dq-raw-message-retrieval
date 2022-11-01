@@ -222,7 +222,7 @@ steps:
     KEYCLOAK_DISCOVERY:
       from_secret: PROD_KEYCLOAK_DISCOVERY
     KUBE_SERVER:
-      from_secret: STAGING_KUBE_SERVER
+      from_secret: PROD_KUBE_SERVER
     KUBE_TOKEN:
       from_secret: STAGING_KUBE_TOKEN
     WHITELIST_RANGES:
