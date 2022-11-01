@@ -45,6 +45,22 @@ x-anchors:
     - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo -n $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
     - sleep 10
 
+  copy-app-user-aws-key: &copy-app-user-aws-key
+    - source set_drone_secrets.sh
+    # get app key id from ssm
+    - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name kubernetes-rmr-user-id-apps-prod-dq --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
+    # generate new key & id for app user
+    - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
+    - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
+    - export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
+    # push new key & id to SSM
+    - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
+    - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
+    # encode new key and id
+    - echo "NEW_AWS_ACCESS_KEY_ID=$(echo -n $NEW_AWS_ACCESS_KEY_ID | base64)" > new_iam_secret.sh
+    - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo -n $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
+    - sleep 10
+
 steps:
 - name: build
   pull: if-not-exists
@@ -71,27 +87,6 @@ steps:
   when:
     event:
     - push
-
-#- name: build_and_push_image
-#  pull: if-not-exists
-#  image: plugins/docker
-#  settings:
-#    context: app
-#    dockerfile: app/Dockerfile
-#    force_tag: true
-#    registry: quay.io
-#    repo: quay.io/ukhomeofficedigital/dq-raw-message-retrieval
-#    tags:
-#    - ${DRONE_COMMIT_SHA}
-#    - b${DRONE_BUILD_NUMBER}
-#  environment:
-#    DOCKER_PASSWORD:
-#      from_secret: docker_password
-#    DOCKER_USERNAME:
-#      from_secret: docker_username
-#  when:
-#    event:
-#    - push
 
 - name: trivy_scan
   pull: if-not-exists
@@ -193,6 +188,70 @@ steps:
     - promote
     target:
     - production
+    - staging
+
+- name: rotate_aws_keys_staging
+  pull: if-not-exists
+  image: *aws-cli
+  commands:
+    *copy-app-user-aws-key
+  environment:
+    SSM_KEY_ID: kubernetes-rmr-user-id-apps-staging-dq
+    SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-staging-dq
+    APP_USER_NAME: iam-user-rmr-apps-staging-dq
+#  when:
+#    branch:
+#    - master
+#    event:
+#    - promote
+#    target:
+#    - staging
+
+- name: deploy_to_staging
+  pull: if-not-exists
+  image: quay.io/ukhomeofficedigital/kd:latest
+  commands:
+  - source new_iam_secret.sh
+  - export KUBE_SERVER=$$STAGING_KUBE_SERVER
+  - export KUBE_TOKEN=$$STAGING_KUBE_TOKEN
+  - export BUCKET_NAME=$$PROD_BUCKET_NAME
+  - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
+  - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
+  - export WHITELIST_RANGES=$$WHITELIST_RANGES_PROD
+  - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
+  environment:
+    ENV: prod
+    INSECURE_SKIP_TLS_VERIFY: true
+    KUBE_NAMESPACE: dq-apps-staging
+    PROD_BUCKET_NAME:
+      from_secret: PROD_BUCKET_NAME
+    PROD_KEYCLOAK_CLIENT_SECRET:
+      from_secret: PROD_KEYCLOAK_CLIENT_SECRET
+    PROD_KEYCLOAK_DISCOVERY:
+      from_secret: PROD_KEYCLOAK_DISCOVERY
+    PROD_KUBE_SERVER:
+      from_secret: PROD_KUBE_SERVER
+    PROD_KUBE_TOKEN:
+      from_secret: PROD_KUBE_TOKEN
+    WHITELIST_RANGES_PROD:
+      from_secret: WHITELIST_RANGES_PROD
+    URL: retrieve-a-raw-message.dq.homeoffice.gov.uk
+    PGHOST:
+      from_secret: PROD_PGHOST
+    PGPORT: "8097"
+    PGUSER:
+      from_secret: PROD_PGUSER
+    PGDATABASE:
+      from_secret: PROD_PGDATABASE
+    PGPASSWORD:
+      from_secret: PROD_PGPASSWORD
+  when:
+    branch:
+    - master
+    event:
+    - promote
+    target:
+    - staging
 
 - name: rotate_aws_keys_prod
   pull: if-not-exists
@@ -244,7 +303,7 @@ steps:
     URL: retrieve-a-raw-message.dq.homeoffice.gov.uk
     PGHOST:
       from_secret: PROD_PGHOST
-    PGPORT: "8096"
+    PGPORT: "8097"
     PGUSER:
       from_secret: PROD_PGUSER
     PGDATABASE:
