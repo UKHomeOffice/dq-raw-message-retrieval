@@ -26,7 +26,7 @@ const read_file_from_zip_buffer = (buffer, file_path) => {
   return zf.readAsText(file_path)
 }
 
-app.get('/raw/index.js/s4/raw/:year/:month/:day/:zipFile/:fileDir/:fileName', async function(req, res) {
+app.get('/raw/index.js/s4/raw/:year/:month/:day/:zipFile/:zipFileName/s4/raw/:year2/:month2/:day2/:zipFile2/:fileDir/:fileName', async function(req, res) {
     try {
       const file_path = `${req.params.fileDir}/${req.params.fileName}`
       const zip_name = `s4/raw/${req.params.year}/${req.params.month}/${req.params.day}/${req.params.zipFile}`
