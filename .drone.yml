@@ -69,11 +69,6 @@ steps:
   # wait for docker service to be up before running docker build
   - n=0; while [ "$n" -lt 60 ] && ! docker stats --no-stream >/dev/null 2>&1; do n=$(( n + 1 )); sleep 1; done
   - docker build -f app/Dockerfile -t dq-raw-message-retrieval:$${DRONE_COMMIT_SHA} ./app --no-cache
-  when:
-    target:
-      exclude:
-      - production
-      - staging
 
 - name: push_image
   pull: if-not-exists
@@ -92,10 +87,6 @@ steps:
   when:
     event:
     - push
-    target:
-      exclude:
-      - production
-      - staging
 
 - name: trivy_scan
   pull: if-not-exists
@@ -108,10 +99,6 @@ steps:
       - master
     event:
     - push
-    target:
-      exclude:
-      - production
-      - staging
 
 - name: retrieve_aws_secrets_np
   pull: if-not-exists
@@ -126,10 +113,6 @@ steps:
   when:
     event:
       - push
-    target:
-      exclude:
-      - production
-      - staging
 
 - name: rotate_aws_keys_np
   pull: if-not-exists
@@ -143,10 +126,6 @@ steps:
   when:
     event:
       - push
-    target:
-      exclude:
-      - production
-      - staging
 
 - name: deploy_to_dev
   pull: if-not-exists
@@ -191,10 +170,6 @@ steps:
   when:
     event:
     - push
-    target:
-      exclude:
-      - production
-      - staging
 
 - name: retrieve_aws_secrets_prod
   pull: if-not-exists
@@ -206,64 +181,58 @@ steps:
       from_secret: VAULT_ADDR_PROD
     VAULT_TOKEN:
       from_secret: VAULT_TOKEN_PROD
-#  when:
-#    branch:
-#    - master
-#    event:
-#    - promote
-#    target:
-#    - production
-#    - staging
+  when:
+    branch:
+    - master
+    event:
+    - promote
+    target:
+    - production
+    - staging
 
 - name: rotate_aws_keys_staging
   pull: if-not-exists
   image: *aws-cli
   commands:
-    *copy-app-user-aws-key
+    *rotate-app-user-aws-key
   environment:
     SSM_KEY_ID: kubernetes-rmr-user-id-apps-staging-dq
     SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-staging-dq
     APP_USER_NAME: iam-user-rmr-apps-prod-dq
-#  when:
-#    branch:
-#    - master
-#    event:
-#    - promote
-#    target:
-#    - staging
+  when:
+    branch:
+    - master
+    event:
+    - promote
+    target:
+    - staging
 
 - name: deploy_to_staging
   pull: if-not-exists
   image: quay.io/ukhomeofficedigital/kd:latest
   commands:
   - source new_iam_secret.sh
-  - export KUBE_SERVER=$$STAGING_KUBE_SERVER
-  - export KUBE_TOKEN=$$STAGING_KUBE_TOKEN
-  - export BUCKET_NAME=$$PROD_BUCKET_NAME
-  - export KEYCLOAK_CLIENT_SECRET=$$PROD_KEYCLOAK_CLIENT_SECRET
-  - export KEYCLOAK_DISCOVERY=$$PROD_KEYCLOAK_DISCOVERY
-  - export WHITELIST_RANGES=$$WHITELIST_RANGES_PROD
   - kd -f kube/network-policy.yml -f kube/secret.yml -f kube/deployment.yml -f kube/service.yml -f kube/ingress.yml
   environment:
     ENV: prod
     INSECURE_SKIP_TLS_VERIFY: true
     KUBE_NAMESPACE: dq-apps-staging
-    PROD_BUCKET_NAME:
+    BUCKET_NAME:
       from_secret: PROD_BUCKET_NAME
-    PROD_KEYCLOAK_CLIENT_SECRET:
+    KEYCLOAK_CLIENT_SECRET:
       from_secret: PROD_KEYCLOAK_CLIENT_SECRET
-    PROD_KEYCLOAK_DISCOVERY:
+    KEYCLOAK_DISCOVERY:
       from_secret: PROD_KEYCLOAK_DISCOVERY
-    PROD_KUBE_SERVER:
-      from_secret: PROD_KUBE_SERVER
-    PROD_KUBE_TOKEN:
-      from_secret: PROD_KUBE_TOKEN
-    WHITELIST_RANGES_PROD:
+    KUBE_SERVER:
+      from_secret: STAGING_KUBE_SERVER
+    KUBE_TOKEN:
+      from_secret: STAGING_KUBE_TOKEN
+    WHITELIST_RANGES:
       from_secret: WHITELIST_RANGES_PROD
-    URL: retrieve-a-raw-message.dq.homeoffice.gov.uk
+    URL: retrieve-a-raw-message.staging.dq.homeoffice.gov.uk
     PGHOST:
       from_secret: PROD_PGHOST
-    PGPORT: "8097"
+    PGPORT: "8098"
     PGUSER:
       from_secret: PROD_PGUSER
     PGDATABASE:
