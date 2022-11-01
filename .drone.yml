@@ -69,6 +69,11 @@ steps:
   # wait for docker service to be up before running docker build
   - n=0; while [ "$n" -lt 60 ] && ! docker stats --no-stream >/dev/null 2>&1; do n=$(( n + 1 )); sleep 1; done
   - docker build -f app/Dockerfile -t dq-raw-message-retrieval:$${DRONE_COMMIT_SHA} ./app --no-cache
+  when:
+    target:
+      exclude:
+      - production
+      - staging
 
 - name: push_image
   pull: if-not-exists
@@ -87,6 +92,10 @@ steps:
   when:
     event:
     - push
+    target:
+      exclude:
+      - production
+      - staging
 
 - name: trivy_scan
   pull: if-not-exists
@@ -99,6 +108,10 @@ steps:
       - master
     event:
     - push
+    target:
+      exclude:
+      - production
+      - staging
 
 - name: retrieve_aws_secrets_np
   pull: if-not-exists
@@ -113,6 +126,10 @@ steps:
   when:
     event:
       - push
+    target:
+      exclude:
+      - production
+      - staging
 
 - name: rotate_aws_keys_np
   pull: if-not-exists
@@ -126,6 +143,10 @@ steps:
   when:
     event:
       - push
+    target:
+      exclude:
+      - production
+      - staging
 
 - name: deploy_to_dev
   pull: if-not-exists
@@ -170,6 +191,10 @@ steps:
   when:
     event:
     - push
+    target:
+      exclude:
+      - production
+      - staging
 
 - name: retrieve_aws_secrets_prod
   pull: if-not-exists
@@ -181,14 +206,14 @@ steps:
       from_secret: VAULT_ADDR_PROD
     VAULT_TOKEN:
       from_secret: VAULT_TOKEN_PROD
-  when:
-    branch:
-    - master
-    event:
-    - promote
-    target:
-    - production
-    - staging
+#  when:
+#    branch:
+#    - master
+#    event:
+#    - promote
+#    target:
+#    - production
+#    - staging
 
 - name: rotate_aws_keys_staging
   pull: if-not-exists
