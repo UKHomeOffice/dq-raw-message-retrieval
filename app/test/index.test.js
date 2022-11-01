@@ -52,10 +52,10 @@ describe('RMR tool', () => {
       status: sinon.stub(),
       send: sinon.stub()
     }
-    const req = {url: '/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename'}
+    const req = {url: '/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename'}
     it('should write the head as html', () =>
       request(app)
-        .get("/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename")
+        .get("/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename")
         .expect(200)
         .end(function(err, res){
           expect(res.status).to.be.calledWith(200, {'Content-Type': 'text/html'})
@@ -64,7 +64,7 @@ describe('RMR tool', () => {
 
     it('should return everything we expect', () =>
       request(app)
-        .get("/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename")
+        .get("/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename")
         .expect(200)
         .end(function(err, res){
           expect(res.end).to.be.calledWithMatch('foobar')
@@ -75,7 +75,7 @@ describe('RMR tool', () => {
   describe('Browser Tests', () => {
     it('should display zip contents successfully', () =>
       request(app)
-        .get('/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename')
+        .get('/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename')
         .expect(200)
         .then(response => {
             expect(response.text).to.have.string('foobar')
@@ -83,12 +83,12 @@ describe('RMR tool', () => {
     )
     it('should 404 on unknown path in zip', () =>
       request(app)
-        .get('/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/nothere')
+        .get('/raw/index.js/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/nothere')
         .expect(404)
     )
     it('should 404 on unknown path to zip', () =>
       request(app)
-        .get('/raw/index.js/s4/raw/YYYY/MM/DD/nothere.zip/filedir/filename')
+        .get('/raw/index.js/s4/raw/YYYY/MM/DD/nothere.zip/s4/raw/YYYY/MM/DD/zip_file_fixture.zip/filedir/filename')
         .expect(404)
     )
     it('should display zip contents successfully', () =>
