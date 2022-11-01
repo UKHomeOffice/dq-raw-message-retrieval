@@ -45,6 +45,24 @@ x-anchors:
     - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo -n $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
     - sleep 10
 
+  rotate-app-user-aws-key-staging: &rotate-app-user-aws-key-staging
+    - source set_drone_secrets.sh
+    # get app key id from ssm
+    - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
+    # delete old iam key &id
+    - aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME
+    # generate new key & id for app user
+    - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
+    - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
+    - export NEW_AWS_SECRET_ACCESS_KEY=$(cat new-key.json | grep SecretAccessKey | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
+    # push new key & id to SSM
+    - aws ssm put-parameter --name $SSM_KEY_ID --type "SecureString" --value $NEW_AWS_ACCESS_KEY_ID --overwrite
+    - aws ssm put-parameter --name $SSM_SECURE_KEY --type "SecureString" --value $NEW_AWS_SECRET_ACCESS_KEY --overwrite
+    # encode new key and id
+    - echo "NEW_AWS_ACCESS_KEY_ID=$(echo -n $NEW_AWS_ACCESS_KEY_ID | base64)" > new_iam_secret.sh
+    - echo "NEW_AWS_SECRET_ACCESS_KEY=$(echo -n $NEW_AWS_SECRET_ACCESS_KEY | base64)" >> new_iam_secret.sh
+    - sleep 10
+
 steps:
 - name: build
   pull: if-not-exists
@@ -178,7 +196,7 @@ steps:
   pull: if-not-exists
   image: *aws-cli
   commands:
-    *rotate-app-user-aws-key
+    *rotate-app-user-aws-key-staging
   environment:
     SSM_KEY_ID: kubernetes-rmr-user-id-apps-staging-dq
     SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-staging-dq
