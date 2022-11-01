@@ -198,7 +198,7 @@ steps:
   environment:
     SSM_KEY_ID: kubernetes-rmr-user-id-apps-staging-dq
     SSM_SECURE_KEY: kubernetes-rmr-user-key-apps-staging-dq
-    APP_USER_NAME: iam-user-rmr-apps-staging-dq
+    APP_USER_NAME: iam-user-rmr-apps-prod-dq
 #  when:
 #    branch:
 #    - master
