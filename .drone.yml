@@ -232,7 +232,7 @@ steps:
     URL: retrieve-a-raw-message.staging.dq.homeoffice.gov.uk
     PGHOST:
       from_secret: PROD_PGHOST
-    PGPORT: "8098"
+    PGPORT: "8096"
     PGUSER:
       from_secret: PROD_PGUSER
     PGDATABASE:
