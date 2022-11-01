@@ -33,7 +33,7 @@ x-anchors:
     - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
     # Delete staging access key
     - export OLD_STAGING_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name kubernetes-rmr-user-id-apps-staging-dq --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
-    - if $OLD_STAGING_AWS_ACCESS_KEY_ID; then aws iam delete-access-key --access-key-id $OLD_STAGING_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME; fi
+    - if [ -z "${OLD_STAGING_AWS_ACCESS_KEY_ID" ]; then aws iam delete-access-key --access-key-id $OLD_STAGING_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME; fi
     # generate new key & id for app user
     - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
     - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
@@ -53,7 +53,7 @@ x-anchors:
     # get app key id from ssm
     - export OLD_AWS_ACCESS_KEY_ID=$(aws ssm get-parameters --name $SSM_KEY_ID --query "Parameters[*].{Value:Value}" --with-decryption | grep Value | awk -F ' ' '{print $2}' | tr -d '"')
     # delete old iam key &id
-    - if $OLD_AWS_ACCESS_KEY_ID; then aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME; fi
+    - if [ -z "${OLD_AWS_ACCESS_KEY_ID" ]; then aws iam delete-access-key --access-key-id $OLD_AWS_ACCESS_KEY_ID --user-name $APP_USER_NAME; fi
     # generate new key & id for app user
     - aws iam create-access-key --user-name $APP_USER_NAME > new-key.json
     - export NEW_AWS_ACCESS_KEY_ID=$(cat new-key.json | grep AccessKeyId | awk -F ' ' '{print $2}' | tr -d '"' | tr -d ',')
