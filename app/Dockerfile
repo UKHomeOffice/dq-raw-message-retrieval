@@ -4,6 +4,7 @@ RUN npm install
 COPY . .
 RUN npm test
 RUN npm prune --production
+RUN npm audit fix --force
 
 FROM node:alpine3.18 as runner
 
