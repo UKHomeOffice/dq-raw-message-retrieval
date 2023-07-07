@@ -39,7 +39,7 @@
     "rewire": "^6.0.0",
     "sinon": "^4.1.4",
     "sinon-chai": "^2.14.0",
-    "supertest": "^3.0.0"
+    "supertest": "^3.0.0",
     "semver": "^2.27.4"
   }
 }
