@@ -41,5 +41,8 @@
     "sinon-chai": "^2.14.0",
     "supertest": "^3.0.0",
     "eslint-plugin-import": "^2.27.4"
+  },
+  "overrides": {
+    "semver": "~7.5.2"
   }
 }
