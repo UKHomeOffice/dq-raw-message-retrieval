@@ -8,6 +8,7 @@ RUN npm audit fix
 
 FROM node:alpine3.18 as runner
 
+RUN apk update && apk add --upgrade libcrypto3 libssl3
 ENV USERMAP_UID 1000
 
 WORKDIR /app
@@ -27,7 +28,7 @@ RUN npm install && \
     npm install --save-dev mocha@9.2.2 && \
     npm install --save-dev ajv@8.11.0 && \
     npm install --save-dev rewire@6.0.0 && \
-    npm audit fix
+    npm audit fix --force
 
 #npm audit show 0 vulnerabilities
 RUN npm audit
