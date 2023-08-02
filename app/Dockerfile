@@ -8,6 +8,7 @@ RUN npm audit fix
 
 FROM node:alpine3.18 as runner
 
+RUN apk update && apk add --upgrade libcrypto3 libssl3
 ENV USERMAP_UID 1000
 
 WORKDIR /app
