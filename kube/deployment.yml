@@ -68,7 +68,7 @@ spec:
           - containerPort: 3000
 
       - name: opensslsidekick
-        image: quay.io/ukhomeofficedigital/dq-haproxy-openssl-sidekick:b80
+        image: quay.io/ukhomeofficedigital/dq-haproxy-openssl-sidekick:b87
         imagePullPolicy: Always
         securityContext:
           runAsNonRoot: true
@@ -115,7 +115,7 @@ spec:
           - --verbose
 
       - name: proxy
-        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b224
+        image: quay.io/ukhomeofficedigital/dq-nginx-proxy-redirect:b264
         securityContext:
           runAsNonRoot: true
           runAsUser: 1000
