@@ -4,7 +4,9 @@ RUN npm install
 COPY . .
 RUN npm test
 RUN npm prune --production
-RUN npm audit fix
+#RUN npm audit fix -- Commenting out this line due to eslint: ^5.9.0, which is an outdated version that requires upgrading to a more recent release. 
+                      #And eslint depends on inquirer, which depends on external-editor, which uses a vulnerable version of tmp.
+                      #The fix requires installing eslint@9.35.0, which is a major version upgrade (a breaking change).
 
 FROM node:alpine3.18 as runner
 
