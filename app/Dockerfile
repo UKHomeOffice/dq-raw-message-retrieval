@@ -6,7 +6,7 @@ COPY . .
 RUN npm prune --production
 RUN npm cache clean --force
 
-FROM node:20-alpine as runner
+FROM node:22-alpine as runner
 
 RUN apk update && apk add --upgrade libcrypto3 libssl3 ssl_client musl-utils busybox-binsh busybox
 ENV USERMAP_UID 1000
