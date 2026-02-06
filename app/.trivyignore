@@ -1,0 +1,11 @@
+# False positives from bundled npm CLI internals in node:20-alpine base image
+# → Located in /usr/local/lib/node_modules/npm/node_modules/*
+# → Not reachable/used by the application runtime
+# → Confirmed by npm list --prod and find/grep showing no matches in /app/node_modules
+CVE-2025-5889      # brace-expansion 2.0.1
+CVE-2024-21538     # cross-spawn 7.0.3
+CVE-2026-24001     # diff 5.2.0
+CVE-2025-64756     # glob 10.3.12 (or 10.4.2 variant)
+CVE-2026-23745     # tar 6.2.1
+CVE-2026-23950     # tar
+CVE-2026-24842     # tar
